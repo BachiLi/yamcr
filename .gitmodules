@@ -7,3 +7,6 @@
 [submodule "OpenExr"]
 	path = OpenExr
 	url = https://github.com/openexr/openexr.git
+[submodule "openexr"]
+	path = openexr
+	url = https://github.com/openexr/openexr.git
