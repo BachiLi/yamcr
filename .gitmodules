@@ -1,3 +1,6 @@
 [submodule "oiio"]
 	path = oiio
 	url = https://github.com/OpenImageIO/oiio.git
+[submodule "embree"]
+	path = embree
+	url = https://github.com/embree/embree.git
