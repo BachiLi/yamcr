@@ -10,6 +10,7 @@
 #include "trianglemesh.h"
 #include "spectrum.h"
 #include "film.h"
+#include "pointlight.h"
 
 using namespace yamcr;
 
@@ -28,6 +29,12 @@ void CreateShapes(std::vector<std::shared_ptr<TriangleMesh>> &shapes) {
     shapes.push_back(mesh);
 }
 
+void CreateLights(std::vector<std::shared_ptr<PointLight>> &lights) {
+    lights.push_back(std::make_shared<PointLight>(
+                Point(0.f, 0.f, 0.f),
+                RGBSpectrum(100.f, 100.f, 100.f)));
+}
+
 int main(int argc, char *argv[]) {
     rtcInit(NULL);
     std::vector<std::shared_ptr<TriangleMesh>> shapes;
@@ -40,10 +47,8 @@ int main(int argc, char *argv[]) {
         for(int x = 0; x < c_XRes; x++) {
             Ray ray = camera.GenerateRay(x, y);
             if(scene.Intersect(ray)) {
-                film.AddSample(x, y, RGBSpectrum(std::array<float, 3>{{ray.u, ray.v, 0.f}}));
-            } else {
-                film.AddSample(x, y, RGBSpectrum(0.f));
-            }
+                film.AddSample(x, y, RGBSpectrum(ray.u, ray.v, 0.f));
+            } 
         }
 
     film.Write(std::string(c_Filename));
