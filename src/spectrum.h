@@ -119,7 +119,17 @@ struct TSpectrum {
     std::array<T,N> data;
 };
 
-typedef TSpectrum<float, 3> RGBSpectrum;
+
+struct RGBSpectrum : public TSpectrum<float, 3> {
+    RGBSpectrum(const TSpectrum &spec) {
+        data = spec.data;
+    }
+    RGBSpectrum(float r, float g, float b) {
+        data[0] = r;
+        data[1] = g;
+        data[2] = b;
+    }
+};
 
 }
 
