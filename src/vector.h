@@ -1,6 +1,8 @@
 #ifndef YAMCR_VECTOR_H__
 #define YAMCR_VECTOR_H__
 
+#include <ostream>
+
 namespace yamcr {
 
 template <typename T> struct TPoint3;
