@@ -9,11 +9,11 @@
 #include "camera.h"
 #include "trianglemesh.h"
 #include "spectrum.h"
+#include "film.h"
 
 using namespace yamcr;
 
 const int c_XRes = 512, c_YRes = 512;
-const int c_Channels = 3;
 const char *c_Filename = "foo.exr";
 
 void CreateShapes(std::vector<std::shared_ptr<TriangleMesh>> &shapes) {
@@ -34,26 +34,19 @@ int main(int argc, char *argv[]) {
     CreateShapes(shapes);
     Scene scene(shapes);
     Camera camera(c_XRes, c_YRes);
-    RGBSpectrum pixels[c_XRes*c_YRes];
-    RGBSpectrum *pixPtr = pixels;
+    Film film(c_XRes, c_YRes);
+
     for(int y = 0; y < c_YRes; y++)
         for(int x = 0; x < c_XRes; x++) {
             Ray ray = camera.GenerateRay(x, y);
             if(scene.Intersect(ray)) {
-                *pixPtr++ = RGBSpectrum(std::array<float, 3>{{ray.u, ray.v, 0.f}});
+                film.AddSample(x, y, RGBSpectrum(std::array<float, 3>{{ray.u, ray.v, 0.f}}));
             } else {
-                *pixPtr++ = RGBSpectrum(0.f);
+                film.AddSample(x, y, RGBSpectrum(0.f));
             }
         }
 
-    OpenImageIO::ImageOutput *out = OpenImageIO::ImageOutput::create(c_Filename);
-    if(!out)
-        return 1;
-    OpenImageIO::ImageSpec spec(c_XRes, c_YRes, c_Channels, OpenImageIO::TypeDesc::HALF);
-    out->open(c_Filename, spec);
-    out->write_image(OpenImageIO::TypeDesc::FLOAT, pixels);
-    out->close();
-    delete out;
+    film.Write(std::string(c_Filename));
     rtcExit();
     return 0;
 }
