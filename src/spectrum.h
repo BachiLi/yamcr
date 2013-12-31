@@ -3,6 +3,8 @@
 
 #include <array>
 
+namespace yamcr {
+
 /**
  *  Abstract generic spectrum class borrowed from mitsuba
  *  http://www.mitsuba-renderer.org/
@@ -118,5 +120,7 @@ struct TSpectrum {
 };
 
 typedef TSpectrum<float, 3> RGBSpectrum;
+
+}
 
 #endif //YAMCR_SPECTRUM_H__
