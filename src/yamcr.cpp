@@ -8,6 +8,7 @@
 #include "scene.h"
 #include "camera.h"
 #include "trianglemesh.h"
+#include "spectrum.h"
 
 using namespace yamcr;
 
@@ -33,19 +34,15 @@ int main(int argc, char *argv[]) {
     CreateShapes(shapes);
     Scene scene(shapes);
     Camera camera(c_XRes, c_YRes);
-    float pixels[c_XRes*c_YRes*c_Channels] = {0.f};
-    float *pixPtr = pixels;
+    RGBSpectrum pixels[c_XRes*c_YRes];
+    RGBSpectrum *pixPtr = pixels;
     for(int y = 0; y < c_YRes; y++)
         for(int x = 0; x < c_XRes; x++) {
             Ray ray = camera.GenerateRay(x, y);
             if(scene.Intersect(ray)) {
-                *pixPtr++ = ray.u;
-                *pixPtr++ = ray.v;
-                *pixPtr++ = 0.f;
+                *pixPtr++ = RGBSpectrum(std::array<float, 3>{{ray.u, ray.v, 0.f}});
             } else {
-                *pixPtr++ = 0.f;
-                *pixPtr++ = 0.f;
-                *pixPtr++ = 0.f;
+                *pixPtr++ = RGBSpectrum(0.f);
             }
         }
 
