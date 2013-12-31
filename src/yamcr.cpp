@@ -1,5 +1,4 @@
-typedef                int  int32;
-
+#include "commondefs.h"
 #include <OpenImageIO/imageio.h>
 #include <stdint.h>
 #include <embree2/rtcore.h>
