@@ -2,8 +2,11 @@
 #include <OpenImageIO/imageio.h>
 #include <stdint.h>
 #include <embree2/rtcore.h>
-#include <embree2/rtcore_ray.h>
 #include <limits>
+
+#include "ray.h"
+
+using namespace yamcr;
 
 const int c_XRes = 512, c_YRes = 512;
 const int c_Channels = 3;
@@ -39,6 +42,9 @@ RTCScene CreateScene() {
 RTCRay GenerateRay(int x, int y) {
     float nx = (((float)x+0.5f)/(float)c_XRes) - 0.5f;
     float ny = - ((((float)y+0.5f)/(float)c_YRes) - 0.5f);
+    Ray ray(Point(0.f, 0.f, -5.f),
+            Vector(nx, ny, 1.f));
+/*    
     RTCRay ray;
     ray.org[0] = 0.f;
     ray.org[1] = 0.f;
@@ -52,7 +58,8 @@ RTCRay GenerateRay(int x, int y) {
     ray.primID = -1;
     ray.mask = -1;
     ray.time = 0.f;
-    return ray;
+ */    
+    return ray.ToRTCRay();
 }
 
 bool Intersect(RTCScene scene, RTCRay &ray) {

@@ -15,7 +15,7 @@ HDRS     = $(wildcard *.h)
 default: dirs ../bin/yamcr
 	
 dirs:
-	/bin/mkdir -p bin objs
+	/bin/mkdir -p ../bin objs
 
 objs/%.o: %.cpp $(HDRS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
