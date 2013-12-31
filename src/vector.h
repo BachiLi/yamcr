@@ -2,6 +2,7 @@
 #define YAMCR_VECTOR_H__
 
 #include <ostream>
+#include <cmath>
 
 namespace yamcr {
 
@@ -126,6 +127,14 @@ struct TVector3 {
 
     T& operator[](int i) const {
         return (&x)[i];
+    }
+
+    T LengthSquared() const {
+        return x*x+y*y+z*z;
+    }
+
+    T Length() const {
+        return std::sqrt(LengthSquared());
     }
 
     friend std::ostream& operator<<(std::ostream& cout, const TVector3 &a) {

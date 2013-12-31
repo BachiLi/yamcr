@@ -65,26 +65,8 @@ struct TPoint3 {
         return *this;
     }
 
-    TPoint3 operator-(const TPoint3 &v) const {
-        return TPoint3(x - v.x, y - v.y, z - v.z);
-    }
-
-    TPoint3& operator-=(const TPoint3 &v) {
-        x -= v.x; y -= v.y; z -= v.z;
-        return *this;
-    }
-
-    TPoint3 operator-(T v) const {
-        return TPoint3(x - v, y - v, z - v);
-    }
-
-    TPoint3& operator-=(T v) {
-        x -= v; y -= v; z -= v;
-        return *this;
-    }
-
-    friend TPoint3 operator-(float v1, const TPoint3 &v2) {
-        return v2-v1;
+    TVector3<T> operator-(const TPoint3 &v) const {
+        return TVector3<T>(x - v.x, y - v.y, z - v.z);
     }
 
     TPoint3 operator*(T v) const {
