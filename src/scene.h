@@ -1,14 +1,17 @@
 #ifndef YAMCR_SCENE_H__
 #define YAMCR_SCENE_H__
 
-#include <embree2/rtcore.h>
 #include "ray.h"
+#include "trianglemesh.h"
+#include <vector>
+#include <memory>
+#include <embree2/rtcore.h>
 
 namespace yamcr {
     
 class Scene {
 public:
-    Scene();    
+    Scene(const std::vector<std::shared_ptr<TriangleMesh>> &shapes);
     ~Scene();
 
     bool Intersect(Ray &ray);    

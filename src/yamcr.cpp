@@ -7,6 +7,7 @@
 #include "ray.h"
 #include "scene.h"
 #include "camera.h"
+#include "trianglemesh.h"
 
 using namespace yamcr;
 
@@ -14,9 +15,23 @@ const int c_XRes = 512, c_YRes = 512;
 const int c_Channels = 3;
 const char *c_Filename = "foo.exr";
 
+void CreateShapes(std::vector<std::shared_ptr<TriangleMesh>> &shapes) {
+    std::vector<PointA> vertices;
+    vertices.push_back(PointA( 0.f,  1.f,  1.f));
+    vertices.push_back(PointA(-1.f, -1.f,  1.f));
+    vertices.push_back(PointA( 1.f, -1.f,  1.f));
+    std::vector<Triangle> triangles;
+    triangles.push_back(Triangle(0, 1, 2));
+    std::shared_ptr<TriangleMesh> mesh = 
+        std::make_shared<TriangleMesh>(vertices, triangles);
+    shapes.push_back(mesh);
+}
+
 int main(int argc, char *argv[]) {
     rtcInit(NULL);
-    Scene scene;
+    std::vector<std::shared_ptr<TriangleMesh>> shapes;
+    CreateShapes(shapes);
+    Scene scene(shapes);
     Camera camera(c_XRes, c_YRes);
     float pixels[c_XRes*c_YRes*c_Channels] = {0.f};
     float *pixPtr = pixels;
