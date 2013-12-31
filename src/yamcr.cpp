@@ -44,21 +44,6 @@ RTCRay GenerateRay(int x, int y) {
     float ny = - ((((float)y+0.5f)/(float)c_YRes) - 0.5f);
     Ray ray(Point(0.f, 0.f, -5.f),
             Vector(nx, ny, 1.f));
-/*    
-    RTCRay ray;
-    ray.org[0] = 0.f;
-    ray.org[1] = 0.f;
-    ray.org[2] = -5.f;
-    ray.dir[0] = nx;
-    ray.dir[1] = ny;
-    ray.dir[2] = 1.f;
-    ray.tnear = 0.f;
-    ray.tfar = std::numeric_limits<float>::infinity();
-    ray.geomID = -1;
-    ray.primID = -1;
-    ray.mask = -1;
-    ray.time = 0.f;
- */    
     return ray.ToRTCRay();
 }
 
@@ -94,6 +79,7 @@ int main(int argc, char *argv[]) {
     out->write_image(OpenImageIO::TypeDesc::FLOAT, pixels);
     out->close();
     delete out;
+    rtcDeleteScene(scene);
     rtcExit();
     return 0;
 }
