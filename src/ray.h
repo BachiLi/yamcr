@@ -2,6 +2,7 @@
 #define YAMCR_RAY_H__
 
 #include "commondefs.h"
+#include <embree2/rtcore.h>
 #include <embree2/rtcore_ray.h>
 #include "point.h"
 #include "vector.h"
