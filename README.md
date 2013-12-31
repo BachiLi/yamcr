@@ -5,4 +5,5 @@ Yamcr stands for "Yet Another Monte Carlo Renderer", and is a physically-based r
 More details coming soon.
 
 Current render
+
 ![Current render](current_render.png "Current render")
