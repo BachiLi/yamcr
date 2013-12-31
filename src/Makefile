@@ -12,7 +12,7 @@ SRCS     = $(wildcard *.cpp)
 OBJS     = $(addprefix objs/, $(subst /,_,$(SRCS:.cpp=.o)))
 HDRS     = $(wildcard *.h)
 
-default: dirs bin/yamcr
+default: dirs ../bin/yamcr
 	
 dirs:
 	/bin/mkdir -p bin objs
@@ -20,6 +20,10 @@ dirs:
 objs/%.o: %.cpp $(HDRS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
-bin/yamcr: $(OBJS)
+../bin/yamcr: $(OBJS)
 	$(CXX) -o $@ $^ $(CXXFLAGS) $(LIBS)
 	
+.PHONY: clean
+
+clean:
+	rm -f objs/*.o 
