@@ -6,6 +6,7 @@
 namespace yamcr {
 
 template <typename T> struct TPoint3;
+struct VectorA;
 
 /**
  * Generic 3-d vector borrowed from Mitsuba's implementation
@@ -26,6 +27,8 @@ struct TVector3 {
 
     template <typename T2> explicit TVector3(const TPoint3<T2> &p) :
         x((T)p.x), y((T)p.y), z((T)p.z) {}
+
+    TVector3(const VectorA& v);
 
     TVector3 operator+(const TVector3 &v) const {
         return TVector3(x + v.x, y + v.y, z + v.z);
@@ -133,6 +136,25 @@ struct TVector3 {
 };
 
 typedef TVector3<float> Vector;
+
+/**
+ *   A 3-d float vector with padding for memory alignment
+ */
+struct VectorA : public Vector {
+    VectorA() {}
+    VectorA(float v) : Vector(v), a(0) {}
+    VectorA(float x, float y, float z) : Vector(x, y, z), a(0) {}
+    VectorA(const Vector &v) : Vector(v), a(0) {}
+    template<typename T>
+    explicit VectorA(const TPoint3<T> &p) : Vector(p), a(0) {}
+    
+    int a;
+};
+
+template<typename T>
+TVector3<T>::TVector3(const VectorA& v) : 
+        x((T)v.x), y((T)v.y), z((T)v.z) {}
+
 
 }
 

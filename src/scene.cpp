@@ -1,19 +1,19 @@
 #include "scene.h"
+#include "vector.h"
 
 namespace yamcr {
 
-struct Vertex {float x, y, z, a;};
 struct Triangle {int v0, v1, v2;};
 
 Scene::Scene() {
-    m_RtcScene = rtcNewScene(RTC_SCENE_STATIC, 
-                        RTC_INTERSECT1);
+    m_RtcScene = rtcNewScene(
+            RTC_SCENE_STATIC, RTC_INTERSECT1);
 
     unsigned geomID = rtcNewTriangleMesh(m_RtcScene, RTC_GEOMETRY_STATIC, 1, 3, 1);
-    Vertex* vertices = (Vertex*) rtcMapBuffer(m_RtcScene, geomID, RTC_VERTEX_BUFFER);
-    vertices[0] = {.x =  0.f, .y =  1.f, .z = 1.f};
-    vertices[1] = {.x = -1.f, .y = -1.f, .z = 1.f};
-    vertices[2] = {.x =  1.f, .y = -1.f, .z = 1.f};
+    PointA* vertices = (PointA*) rtcMapBuffer(m_RtcScene, geomID, RTC_VERTEX_BUFFER);
+    vertices[0] = Point( 0.f,  1.f,  1.f);
+    vertices[1] = Point(-1.f, -1.f,  1.f);
+    vertices[2] = Point( 1.f, -1.f,  1.f);
     rtcUnmapBuffer(m_RtcScene, geomID, RTC_VERTEX_BUFFER);
 
     Triangle* triangles = (Triangle*) rtcMapBuffer(m_RtcScene, geomID, RTC_INDEX_BUFFER);

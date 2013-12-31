@@ -132,6 +132,20 @@ struct TPoint3 {
 
 typedef TPoint3<float> Point;
 
+/**
+ *   A 3-d float point vector with padding for memory alignment
+ */
+struct PointA : public Point {
+    PointA() {}
+    PointA(float v) : Point(v), a(0) {}
+    PointA(float x, float y, float z) : Point(x, y, z), a(0) {}
+    PointA(const Point &p) : Point(p), a(0) {}
+    explicit PointA(const Vector &v) : Point(v), a(0) {}
+    
+    int a;
+};
+
+
 }
 
 #endif //YAMCR_POINT_H__
