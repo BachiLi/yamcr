@@ -1,13 +1,11 @@
 #ifndef YAMCR_POINTLIGHT_H__
 #define YAMCR_POINTLIGHT_H__
 
-#include "spectrum.h"
-#include "ray.h"
-#include "intersection.h"
+#include "light.h"
 
 namespace yamcr {
 
-class PointLight {
+class PointLight : public Light {
 public:
     PointLight(const Point &pos, const RGBSpectrum &intensity) :
         m_Pos(pos), m_Intensity(intensity) {}

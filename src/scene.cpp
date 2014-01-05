@@ -3,7 +3,7 @@
 
 namespace yamcr {
 
-Scene::Scene(const std::vector<std::shared_ptr<TriangleMesh>> &shapes) {
+Scene::Scene(const std::vector<std::shared_ptr<Shape>> &shapes) {
     m_RtcScene = rtcNewScene(
             RTC_SCENE_STATIC, RTC_INTERSECT1);
 

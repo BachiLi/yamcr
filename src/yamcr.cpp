@@ -21,7 +21,7 @@ const Point c_CameraPos = Point(0.f, 0.f, -5.f);
 const Vector c_CameraDir = Vector(0.f, 0.f, 1.f);
 const Vector c_CameraUp = Vector(0.f, 1.f, 0.f);
 
-void CreateShapes(std::vector<std::shared_ptr<TriangleMesh>> &shapes) {
+void CreateShapes(std::vector<std::shared_ptr<Shape>> &shapes) {
     {
         std::vector<PointA> vertices;
         vertices.push_back(PointA( 0.0f,  0.5f,  1.0f));
@@ -49,7 +49,7 @@ void CreateShapes(std::vector<std::shared_ptr<TriangleMesh>> &shapes) {
     }
 }
 
-void CreateLights(std::vector<std::shared_ptr<PointLight>> &lights) {
+void CreateLights(std::vector<std::shared_ptr<Light>> &lights) {
     lights.push_back(std::make_shared<PointLight>(
                 Point(4.f, 4.f, -1.0f),
                 RGBSpectrum(20.f, 20.f, 20.f)));
@@ -57,8 +57,8 @@ void CreateLights(std::vector<std::shared_ptr<PointLight>> &lights) {
 
 int main(int argc, char *argv[]) {
     rtcInit(NULL);
-    std::vector<std::shared_ptr<TriangleMesh>> shapes;
-    std::vector<std::shared_ptr<PointLight>> lights;
+    std::vector<std::shared_ptr<Shape>> shapes;
+    std::vector<std::shared_ptr<Light>> lights;
     CreateShapes(shapes);
     CreateLights(lights);
     Scene scene(shapes);

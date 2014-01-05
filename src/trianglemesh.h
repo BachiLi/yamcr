@@ -1,9 +1,9 @@
 #ifndef YAMCR_TRIANGLEMESH_H__
 #define YAMCR_TRIANGLEMESH_H__
 
+#include "shape.h"
 #include "point.h"
 #include <vector>
-#include <embree2/rtcore.h>
 
 namespace yamcr {
 
@@ -17,7 +17,7 @@ struct Triangle {
     uint32_t idx[3];    
 };
 
-class TriangleMesh {
+class TriangleMesh : public Shape {
 public:
     TriangleMesh(const std::vector<PointA> &vertices,
                  const std::vector<Triangle> &triangles) :

@@ -12,7 +12,7 @@ namespace yamcr {
     
 class Scene {
 public:
-    Scene(const std::vector<std::shared_ptr<TriangleMesh>> &shapes);
+    Scene(const std::vector<std::shared_ptr<Shape>> &shapes);
     ~Scene();
 
     bool Intersect(Ray &ray, Intersection *isect);
