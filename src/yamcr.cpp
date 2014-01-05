@@ -10,7 +10,7 @@
 #include "shapes/trianglemesh.h"
 #include "spectrum.h"
 #include "film.h"
-#include "lights/pointlight.h"
+#include "lights/point.h"
 #include "intersection.h"
 
 using namespace yamcr;
