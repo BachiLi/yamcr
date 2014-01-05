@@ -2,8 +2,8 @@
 #define YAMCR_SCENE_H__
 
 #include "ray.h"
-#include "trianglemesh.h"
 #include "intersection.h"
+#include "shapes/shape.h"
 #include <vector>
 #include <memory>
 #include <embree2/rtcore.h>

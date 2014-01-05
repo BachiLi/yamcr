@@ -7,15 +7,15 @@
 #include "ray.h"
 #include "scene.h"
 #include "camera.h"
-#include "trianglemesh.h"
+#include "shapes/trianglemesh.h"
 #include "spectrum.h"
 #include "film.h"
-#include "pointlight.h"
+#include "lights/pointlight.h"
 #include "intersection.h"
 
 using namespace yamcr;
 
-const int c_XRes = 512, c_YRes = 512;
+const int c_XRes = 512, c_YRes = 512, c_Spp = 4;
 const char *c_Filename = "foo.exr";
 const Point c_CameraPos = Point(0.f, 0.f, -5.f);
 const Vector c_CameraDir = Vector(0.f, 0.f, 1.f);
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
     Film film(c_XRes, c_YRes);
 
     for(int y = 0; y < c_YRes; y++)
-        for(int x = 0; x < c_XRes; x++) {
+        for(int x = 0; x < c_XRes; x++) {            
             Ray ray = camera.GenerateRay(x, y);
             Intersection isect;
             if(scene.Intersect(ray, &isect)) {
