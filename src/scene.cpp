@@ -17,8 +17,19 @@ Scene::~Scene() {
     rtcDeleteScene(m_RtcScene);
 }
 
-bool Scene::Intersect(Ray &ray) {
+bool Scene::Intersect(Ray &ray, Intersection *isect) {
     rtcIntersect(m_RtcScene, ray.ToRTCRay());
+    if(ray.geomID != -1) {
+        isect->p = ray.org + ray.dir * ray.tfar;
+        isect->n = ray.Ng;
+        isect->rayEpsilon = 1e-3f*ray.tfar;
+        return true;
+    }
+    return false;
+}
+
+bool Scene::Occluded(Ray &ray) {
+    rtcOccluded(m_RtcScene, ray.ToRTCRay());
     return ray.geomID != -1;
 }
 

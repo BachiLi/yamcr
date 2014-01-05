@@ -15,12 +15,13 @@ namespace yamcr {
  *  An embree compatible ray
  */
 struct Ray {
-    Ray() {}
+    Ray() :
+        mask(-1), geomID(-1), primID(-1), instID(-1) {}
     Ray(const Point &org, const Vector &dir, 
             float tnear=0.f, float tfar=std::numeric_limits<float>::infinity(),
-            float time=0.f, int mask=-1)
-        : org(org), dir(dir), tnear(tnear), tfar(tfar), time(time), mask(mask),
-          geomID(-1), primID(-1), instID(-1)  {}
+            float time=0.f, int mask=-1) :
+        org(org), dir(dir), tnear(tnear), tfar(tfar), time(time), mask(mask),
+        geomID(-1), primID(-1), instID(-1)  {}
 
     RTCRay& ToRTCRay() const {
         return (RTCRay&)(*this);

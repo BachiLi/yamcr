@@ -11,6 +11,7 @@
 #include "spectrum.h"
 #include "film.h"
 #include "pointlight.h"
+#include "intersection.h"
 
 using namespace yamcr;
 
@@ -18,27 +19,45 @@ const int c_XRes = 512, c_YRes = 512;
 const char *c_Filename = "foo.exr";
 
 void CreateShapes(std::vector<std::shared_ptr<TriangleMesh>> &shapes) {
-    std::vector<PointA> vertices;
-    vertices.push_back(PointA( 0.f,  1.f,  1.f));
-    vertices.push_back(PointA(-1.f, -1.f,  1.f));
-    vertices.push_back(PointA( 1.f, -1.f,  1.f));
-    std::vector<Triangle> triangles;
-    triangles.push_back(Triangle(0, 1, 2));
-    std::shared_ptr<TriangleMesh> mesh = 
-        std::make_shared<TriangleMesh>(vertices, triangles);
-    shapes.push_back(mesh);
+    {
+        std::vector<PointA> vertices;
+        vertices.push_back(PointA( 0.0f,  0.5f,  1.0f));
+        vertices.push_back(PointA(-0.5f, -0.25f,  0.2f));
+        vertices.push_back(PointA( 0.5f,  0.0f,  0.6f));
+        std::vector<Triangle> triangles;
+        triangles.push_back(Triangle(0, 1, 2));
+        std::shared_ptr<TriangleMesh> mesh = 
+            std::make_shared<TriangleMesh>(vertices, triangles);
+        shapes.push_back(mesh);
+    }
+
+    {
+        std::vector<PointA> vertices;
+        vertices.push_back(PointA(-4.f, -1.5f,  10.f));
+        vertices.push_back(PointA(-4.f, -1.5f,  0.f));
+        vertices.push_back(PointA( 4.f, -1.5f,  0.f));
+        vertices.push_back(PointA( 4.f, -1.5f,  10.f));
+        std::vector<Triangle> triangles;
+        triangles.push_back(Triangle(0, 1, 2));
+        triangles.push_back(Triangle(0, 2, 3));
+        std::shared_ptr<TriangleMesh> mesh = 
+            std::make_shared<TriangleMesh>(vertices, triangles);
+        shapes.push_back(mesh);
+    }
 }
 
 void CreateLights(std::vector<std::shared_ptr<PointLight>> &lights) {
     lights.push_back(std::make_shared<PointLight>(
-                Point(0.f, 0.f, 0.f),
-                RGBSpectrum(100.f, 100.f, 100.f)));
+                Point(4.f, 4.f, -1.0f),
+                RGBSpectrum(20.f, 20.f, 20.f)));
 }
 
 int main(int argc, char *argv[]) {
     rtcInit(NULL);
     std::vector<std::shared_ptr<TriangleMesh>> shapes;
+    std::vector<std::shared_ptr<PointLight>> lights;
     CreateShapes(shapes);
+    CreateLights(lights);
     Scene scene(shapes);
     Camera camera(c_XRes, c_YRes);
     Film film(c_XRes, c_YRes);
@@ -46,8 +65,16 @@ int main(int argc, char *argv[]) {
     for(int y = 0; y < c_YRes; y++)
         for(int x = 0; x < c_XRes; x++) {
             Ray ray = camera.GenerateRay(x, y);
-            if(scene.Intersect(ray)) {
-                film.AddSample(x, y, RGBSpectrum(ray.u, ray.v, 0.f));
+            Intersection isect;
+            if(scene.Intersect(ray, &isect)) {
+                for(auto it = lights.begin(); it != lights.end(); it++) {
+                    Ray shadowRay;
+                    RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);
+                    if(!scene.Occluded(shadowRay)) {
+                        RGBSpectrum L = Le*AbsDot(isect.n, shadowRay.dir);
+                        film.AddSample(x, y, L);
+                    }                    
+                }                
             } 
         }
 

@@ -164,6 +164,19 @@ template<typename T>
 TVector3<T>::TVector3(const VectorA& v) : 
         x((T)v.x), y((T)v.y), z((T)v.z) {}
 
+inline Vector Normalize(const Vector &v) {
+    return v / v.Length();
+}
+
+template<typename T> inline
+T Dot(const TVector3<T> &v1, const TVector3<T> &v2) {
+    return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z;
+}
+
+template<typename T> inline
+T AbsDot(const TVector3<T> &v1, const TVector3<T> &v2) {
+    return std::abs(v1.x*v2.x + v1.y*v2.y + v1.z*v2.z);
+}
 
 }
 

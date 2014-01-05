@@ -3,6 +3,7 @@
 
 #include "ray.h"
 #include "trianglemesh.h"
+#include "intersection.h"
 #include <vector>
 #include <memory>
 #include <embree2/rtcore.h>
@@ -14,7 +15,8 @@ public:
     Scene(const std::vector<std::shared_ptr<TriangleMesh>> &shapes);
     ~Scene();
 
-    bool Intersect(Ray &ray);    
+    bool Intersect(Ray &ray, Intersection *isect);
+    bool Occluded(Ray &ray);
 private:
     RTCScene m_RtcScene;
 };
