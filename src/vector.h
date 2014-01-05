@@ -178,6 +178,13 @@ T AbsDot(const TVector3<T> &v1, const TVector3<T> &v2) {
     return std::abs(v1.x*v2.x + v1.y*v2.y + v1.z*v2.z);
 }
 
+template<typename T> inline
+TVector3<T> Cross(const TVector3<T> &v1, const TVector3<T> &v2) {
+    return TVector3<T>(v1.y*v2.z - v1.z*v2.y,
+                       v1.z*v2.x - v1.x*v2.z,
+                       v1.x*v2.y - v1.y*v2.x);
+}
+
 }
 
 #endif //YAMCR_VECTOR_H__

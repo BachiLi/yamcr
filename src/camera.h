@@ -2,15 +2,19 @@
 #define YAMCR_CAMERA_H__
 
 #include "ray.h"
+#include "point.h"
+#include "vector.h"
 
 namespace yamcr {
 
 class Camera {
 public:
-    Camera(int xres, int yres) :
-        m_XRes(xres), m_YRes(yres) {}
-    Ray GenerateRay(int x, int y) const;
+    Camera(const Point &pos, const Vector &up, const Vector &dir, 
+           int xres, int yres);
+    Ray GenerateRay(float x, float y) const;
 private:
+    const Point m_Pos;
+    const Vector m_Up, m_Dir, m_Right;
     const int m_XRes, m_YRes;
 };
 

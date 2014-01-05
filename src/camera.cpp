@@ -2,11 +2,17 @@
 
 namespace yamcr {
 
-Ray Camera::GenerateRay(int x, int y) const {
-    float nx = (((float)x+0.5f)/(float)m_XRes) - 0.5f;
-    float ny = - ((((float)y+0.5f)/(float)m_YRes) - 0.5f);
-    Ray ray(Point(0.f, 0.f, -5.f),
-            Normalize(Vector(nx, ny, 1.f)));
+Camera::Camera(const Point &pos, const Vector &dir, const Vector &up, 
+               int xres, int yres) :
+    m_Pos(pos), m_Dir(dir), m_Up(up), m_Right(Cross(m_Up, m_Dir)), 
+    m_XRes(xres), m_YRes(yres) {
+}
+
+Ray Camera::GenerateRay(float x, float y) const {
+    float nx = (x/(float)m_XRes) - 0.5f;
+    float ny = - ((y/(float)m_YRes) - 0.5f);
+    Ray ray(m_Pos,
+            Normalize(nx*m_Right + ny*m_Up + m_Dir));
     return ray;
 }
 

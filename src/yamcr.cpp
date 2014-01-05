@@ -17,6 +17,9 @@ using namespace yamcr;
 
 const int c_XRes = 512, c_YRes = 512;
 const char *c_Filename = "foo.exr";
+const Point c_CameraPos = Point(0.f, 0.f, -5.f);
+const Vector c_CameraDir = Vector(0.f, 0.f, 1.f);
+const Vector c_CameraUp = Vector(0.f, 1.f, 0.f);
 
 void CreateShapes(std::vector<std::shared_ptr<TriangleMesh>> &shapes) {
     {
@@ -59,7 +62,7 @@ int main(int argc, char *argv[]) {
     CreateShapes(shapes);
     CreateLights(lights);
     Scene scene(shapes);
-    Camera camera(c_XRes, c_YRes);
+    Camera camera(c_CameraPos, c_CameraDir, c_CameraUp, c_XRes, c_YRes);
     Film film(c_XRes, c_YRes);
 
     for(int y = 0; y < c_YRes; y++)
