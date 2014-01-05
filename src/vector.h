@@ -144,6 +144,7 @@ struct TVector3 {
     T x, y, z;
 };
 
+typedef TVector3<float> Vector3;
 typedef TVector3<float> Vector;
 
 /**

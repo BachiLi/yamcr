@@ -9,7 +9,7 @@ CXX      = g++-4.7
 INCLUDES = $(OIIO_INCLUDE) $(EMBREE_INCLUDE) -I.
 LIBS     = $(OIIO_LIB) $(EMBREE_LIB) $(BOOST_LIB)
 CXXFLAGS = $(INCLUDES) -std=c++11
-SRCS     = $(wildcard *.cpp) $(wildcard lights/*.cpp) $(wildcard shapes/*.cpp)
+SRCS     = $(wildcard *.cpp) $(wildcard lights/*.cpp) $(wildcard shapes/*.cpp) $(wildcard samplers/*.cpp)
 OBJS     = $(addprefix objs/, $(subst /,_,$(SRCS:.cpp=.o)))
 HDRS     = $(wildcard *.h) $(wildcard */*.h)
 
@@ -25,6 +25,9 @@ objs/lights_%.o: lights/%.cpp $(HDRS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 objs/shapes_%.o: shapes/%.cpp $(HDRS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS)
+
+objs/samplers_%.o: samplers/%.cpp $(HDRS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS)
 
 ../bin/yamcr: $(OBJS)

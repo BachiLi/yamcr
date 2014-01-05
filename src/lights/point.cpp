@@ -1,4 +1,4 @@
-#include "pointlight.h"
+#include "point.h"
 
 namespace yamcr {
 

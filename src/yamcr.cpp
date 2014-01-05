@@ -8,14 +8,15 @@
 #include "scene.h"
 #include "camera.h"
 #include "shapes/trianglemesh.h"
+#include "lights/point.h"
+#include "samplers/random.h"
 #include "spectrum.h"
 #include "film.h"
-#include "lights/point.h"
 #include "intersection.h"
 
 using namespace yamcr;
 
-const int c_XRes = 512, c_YRes = 512, c_Spp = 4;
+const int c_XRes = 512, c_YRes = 512, c_Spp = 16;
 const char *c_Filename = "foo.exr";
 const Point c_CameraPos = Point(0.f, 0.f, -5.f);
 const Vector c_CameraDir = Vector(0.f, 0.f, 1.f);
@@ -64,22 +65,28 @@ int main(int argc, char *argv[]) {
     Scene scene(shapes);
     Camera camera(c_CameraPos, c_CameraDir, c_CameraUp, c_XRes, c_YRes);
     Film film(c_XRes, c_YRes);
+    RandomSampler random;
 
-    for(int y = 0; y < c_YRes; y++)
+    for(int y = 0; y < c_YRes; y++) {
         for(int x = 0; x < c_XRes; x++) {            
-            Ray ray = camera.GenerateRay(x, y);
-            Intersection isect;
-            if(scene.Intersect(ray, &isect)) {
-                for(auto it = lights.begin(); it != lights.end(); it++) {
-                    Ray shadowRay;
-                    RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);
-                    if(!scene.Occluded(shadowRay)) {
-                        RGBSpectrum L = Le*AbsDot(isect.n, shadowRay.dir);
-                        film.AddSample(x, y, L);
-                    }                    
-                }                
-            } 
+            random.NewSequence();
+            for(int s = 0; s < c_Spp; s++) {
+                Ray ray = camera.GenerateRay(Point2(x, y) + random.Next2D());
+                Intersection isect;
+                RGBSpectrum L(0.f);
+                if(scene.Intersect(ray, &isect)) {
+                    for(auto it = lights.begin(); it != lights.end(); it++) {
+                        Ray shadowRay;
+                        RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);
+                        if(!scene.Occluded(shadowRay)) {
+                            L = Le*AbsDot(isect.n, shadowRay.dir);
+                        }                        
+                    }                
+                } 
+                film.AddSample(x, y, L);
+            }
         }
+    }
 
     film.Write(std::string(c_Filename));
     rtcExit();

@@ -11,7 +11,7 @@ class Camera {
 public:
     Camera(const Point &pos, const Vector &up, const Vector &dir, 
            int xres, int yres);
-    Ray GenerateRay(float x, float y) const;
+    Ray GenerateRay(const Point2 &screenPos) const;
 private:
     const Point m_Pos;
     const Vector m_Up, m_Dir, m_Right;
