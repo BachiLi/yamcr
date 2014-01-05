@@ -1,5 +1,5 @@
-#ifndef YAMCR_SHAPE_H__
-#define YAMCR_SHAPE_H__
+#ifndef YAMCR_SHAPES_SHAPE_H__
+#define YAMCR_SHAPES_SHAPE_H__
 
 #include <embree2/rtcore.h>
 
@@ -12,4 +12,4 @@ public:
 
 }
 
-#endif //YAMCR_SHAPE_H__
+#endif //YAMCR_SHAPES_SHAPE_H__

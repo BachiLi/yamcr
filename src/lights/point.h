@@ -1,5 +1,5 @@
-#ifndef YAMCR_POINTLIGHT_H__
-#define YAMCR_POINTLIGHT_H__
+#ifndef YAMCR_LIGHT_POINT_H__
+#define YAMCR_LIGHT_POINT_H__
 
 #include "light.h"
 
@@ -19,4 +19,4 @@ private:
 
 }
 
-#endif //YAMCR_POINTLIGHT_H__
+#endif //YAMCR_LIGHT_POINT_H__

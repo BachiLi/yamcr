@@ -1,5 +1,5 @@
-#ifndef YAMCR_TRIANGLEMESH_H__
-#define YAMCR_TRIANGLEMESH_H__
+#ifndef YAMCR_SHAPES_TRIANGLEMESH_H__
+#define YAMCR_SHAPES_TRIANGLEMESH_H__
 
 #include "shape.h"
 #include "point.h"
@@ -31,4 +31,4 @@ private:
 
 }
 
-#endif //YAMCR_TRIANGLEMESH_H__
+#endif //YAMCR_SHAPES_TRIANGLEMESH_H__

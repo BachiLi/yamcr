@@ -1,5 +1,5 @@
-#ifndef YAMCR_LIGHT_H__
-#define YAMCR_LIGHT_H__
+#ifndef YAMCR_LIGHTS_LIGHT_H__
+#define YAMCR_LIGHTS_LIGHT_H__
 
 #include "spectrum.h"
 #include "ray.h"
@@ -14,4 +14,4 @@ public:
 
 }
 
-#endif //YAMCR_LIGHT_H__
+#endif //YAMCR_LIGHTS_LIGHT_H__
