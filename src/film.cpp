@@ -4,12 +4,12 @@
 
 namespace yamcr {
 
-Film::Film(int width, int height) {
+Film::Film(int width, int height, const std::string &filename) :
+    m_Filename(filename) {
     OpenImageIO::ImageSpec spec(width, height, 4, 
             OpenImageIO::TypeDesc::FLOAT);
     m_Buffer = new OpenImageIO::ImageBuf(spec);
     OpenImageIO::ImageBufAlgo::zero(*m_Buffer);
-    
 }
 
 Film::~Film() {
@@ -27,12 +27,12 @@ void Film::AddSample(float x, float y, const RGBSpectrum &val) {
     m_Buffer->setpixel((int)x, (int)y, newVal.data());
 }
 
-void Film::Write(const std::string &filename) {        
+void Film::Write() {        
     OpenImageIO::ImageBuf buf;
     OpenImageIO::ImageBufAlgo::unpremult(buf, *m_Buffer);
     OpenImageIO::ImageBuf rgbBuf;
     OpenImageIO::ImageBufAlgo::channels(rgbBuf, buf, 3, NULL);
-    rgbBuf.write(filename);
+    rgbBuf.write(m_Filename);
 }
 
 }

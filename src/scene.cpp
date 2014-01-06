@@ -3,8 +3,9 @@
 
 namespace yamcr {
 
-Scene::Scene(const std::vector<std::shared_ptr<Primitive>> &prims) :
-    m_Primitives(prims) {
+Scene::Scene(const std::vector<std::shared_ptr<Primitive>> &prims,
+             const std::vector<std::shared_ptr<Light>> &lights) :
+    m_Primitives(prims), m_Lights(lights) {
     m_RtcScene = rtcNewScene(
             RTC_SCENE_STATIC, RTC_INTERSECT1);
 

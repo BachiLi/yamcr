@@ -10,3 +10,6 @@
 [submodule "openexr"]
 	path = openexr
 	url = https://github.com/openexr/openexr.git
+[submodule "ThreadPool"]
+	path = ThreadPool
+	url = https://github.com/progschj/ThreadPool.git

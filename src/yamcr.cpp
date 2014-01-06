@@ -3,6 +3,8 @@
 #include <stdint.h>
 #include <embree2/rtcore.h>
 #include <limits>
+#include <exception>
+#include <thread>
 
 #include "ray.h"
 #include "scene.h"
@@ -15,10 +17,11 @@
 #include "spectrum.h"
 #include "film.h"
 #include "intersection.h"
+#include "blockedrenderer.h"
 
 using namespace yamcr;
 
-const int c_XRes = 512, c_YRes = 512, c_Spp = 16;
+const int c_XRes = 512, c_YRes = 512, c_BlockSize = 32, c_Spp = 16;
 const char *c_Filename = "foo.exr";
 const Point c_CameraPos = Point(0.f, 0.f, -5.f);
 const Vector c_CameraDir = Vector(0.f, 0.f, 1.f);
@@ -63,38 +66,39 @@ void CreateLights(std::vector<std::shared_ptr<Light>> &lights) {
                 RGBSpectrum(5.f, 5.f, 5.f)));
 }
 
+int GetNumThreads() {
+    int numThreads = std::thread::hardware_concurrency();
+    if(numThreads > 0) {
+        return numThreads;
+    } 
+    std::cout << "Warning: unable to detect number of cores, using 16 threads" << std::endl;
+    return 16;
+}
+
 int main(int argc, char *argv[]) {
-    rtcInit(NULL);
-    std::vector<std::shared_ptr<Primitive>> prims;
-    std::vector<std::shared_ptr<Light>> lights;
-    CreatePrimitives(prims);
-    CreateLights(lights);
-    Scene scene(prims);
-    Camera camera(c_CameraPos, c_CameraDir, c_CameraUp, c_XRes, c_YRes);
-    Film film(c_XRes, c_YRes);
-    RandomSampler random;
-
-    for(int y = 0; y < c_YRes; y++) {
-        for(int x = 0; x < c_XRes; x++) {            
-            random.NewSequence();
-            for(int s = 0; s < c_Spp; s++) {
-                Ray ray = camera.GenerateRay(Point2(x, y) + random.Next2D());
-                Intersection isect;
-                RGBSpectrum L(0.f);
-                if(scene.Intersect(ray, &isect)) {
-                    for(auto it = lights.begin(); it != lights.end(); it++) {
-                        Ray shadowRay;
-                        RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);
-                        if(!scene.Occluded(shadowRay))        
-                            L += Le*isect.bsdf->Eval(-ray.dir, shadowRay.dir)*AbsDot(isect.n, shadowRay.dir);                        
-                    }
-                } 
-                film.AddSample(x, y, L);
-            }
-        }
+    try {
+        rtcInit(NULL);
+        std::vector<std::shared_ptr<Primitive>> prims;
+        std::vector<std::shared_ptr<Light>> lights;
+        CreatePrimitives(prims);
+        CreateLights(lights);
+        std::shared_ptr<Scene> scene = 
+            std::make_shared<Scene>(prims, lights);
+        std::shared_ptr<Camera> camera = 
+            std::make_shared<Camera>(c_CameraPos, c_CameraDir, c_CameraUp, c_XRes, c_YRes);
+        std::shared_ptr<Film> film = 
+            std::make_shared<Film>(c_XRes, c_YRes, c_Filename);
+        std::shared_ptr<Sampler> sampler =
+            std::make_shared<RandomSampler>();
+        const int numThreads = GetNumThreads();
+        std::shared_ptr<BlockedRenderer> renderer = 
+            std::make_shared<BlockedRenderer>(scene, camera, film, sampler, 
+                    c_BlockSize, c_Spp, numThreads);
+        renderer->Render();
+        rtcExit();
+    } catch(std::exception &ex) {
+        std::cerr << ex.what() << std::endl;
+        return -1;
     }
-
-    film.Write(std::string(c_Filename));
-    rtcExit();
     return 0;
 }

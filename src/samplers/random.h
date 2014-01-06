@@ -8,7 +8,7 @@ namespace yamcr {
 
 class RandomSampler : public Sampler {
 public:
-    void NewSequence() {}
+    std::shared_ptr<Sampler> Clone();
     float Next1D();
     Point2 Next2D();
 private:
