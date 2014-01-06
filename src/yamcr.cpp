@@ -87,10 +87,9 @@ int main(int argc, char *argv[]) {
                     for(auto it = lights.begin(); it != lights.end(); it++) {
                         Ray shadowRay;
                         RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);
-                        if(!scene.Occluded(shadowRay)) {                                                           
-                            L = Le*isect.bsdf->Eval(-ray.dir, shadowRay.dir)*AbsDot(isect.n, shadowRay.dir);
-                        }                        
-                    }                
+                        if(!scene.Occluded(shadowRay))        
+                            L += Le*isect.bsdf->Eval(-ray.dir, shadowRay.dir)*AbsDot(isect.n, shadowRay.dir);                        
+                    }
                 } 
                 film.AddSample(x, y, L);
             }
