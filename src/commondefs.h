@@ -1,9 +1,6 @@
 #ifndef YAMCR_COMMONDEF_H__
 
-/**
- * Include this file before you include any other embree headers!
- */
-
 typedef int int32;
+#define __forceinline          inline __attribute__((always_inline))
 
 #endif //YAMCR_COMMONDEF_H__

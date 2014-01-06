@@ -7,7 +7,7 @@ namespace yamcr {
 
 class Shape {
 public:
-    virtual void Register(RTCScene scene) const = 0;
+    virtual void Register(RTCScene scene, unsigned int geomID) = 0;
 };
 
 }

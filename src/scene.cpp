@@ -8,8 +8,9 @@ Scene::Scene(const std::vector<std::shared_ptr<Primitive>> &prims) :
     m_RtcScene = rtcNewScene(
             RTC_SCENE_STATIC, RTC_INTERSECT1);
 
+    unsigned int geomID = 0;
     for(auto it = m_Primitives.begin(); it != m_Primitives.end(); it++) 
-        (*it)->shape->Register(m_RtcScene);
+        (*it)->shape->Register(m_RtcScene, geomID++);
 
     rtcCommit(m_RtcScene);
 }

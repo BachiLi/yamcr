@@ -23,7 +23,7 @@ public:
                  const std::vector<Triangle> &triangles) :
         vertices(vertices), triangles(triangles) {}
 
-    void Register(RTCScene rtcScene) const;
+    void Register(RTCScene rtcScene, unsigned int geomID);
 private:
     std::vector<PointA> vertices;
     std::vector<Triangle> triangles;

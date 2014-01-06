@@ -23,6 +23,9 @@ struct Ray {
         org(org), dir(dir), tnear(tnear), tfar(tfar), time(time), mask(mask),
         geomID(-1), primID(-1), instID(-1)  {}
 
+    static Ray& FromRTCRay(RTCRay &rtcRay) {
+        return (Ray&)(rtcRay);
+    }
     RTCRay& ToRTCRay() const {
         return (RTCRay&)(*this);
     }
