@@ -24,7 +24,7 @@ bool Scene::Intersect(Ray &ray, Intersection *isect) {
     rtcIntersect(m_RtcScene, ray.ToRTCRay());
     if(ray.geomID != -1) {
         isect->p = ray.org + ray.dir * ray.tfar;
-        isect->n = Normalize(ray.Ng);
+        isect->n = ray.Ng.normalized();
         isect->bsdf = m_Primitives[ray.geomID]->bsdf;
         isect->rayEpsilon = 1e-3f*ray.tfar;
         return true;

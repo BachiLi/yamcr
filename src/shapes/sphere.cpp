@@ -12,21 +12,21 @@ void Sphere::BoundsFunc(const Sphere* spheres, size_t item, RTCBounds* bounds_o)
     const Sphere& sphere = spheres[item];
     Point p = sphere.m_Pos;
     float r = sphere.m_Radius;
-    bounds_o->lower_x = p.x - r;
-    bounds_o->lower_y = p.y - r;
-    bounds_o->lower_z = p.z - r;
-    bounds_o->upper_x = p.x + r;
-    bounds_o->upper_y = p.y + r;
-    bounds_o->upper_z = p.z + r;
+    bounds_o->lower_x = p[0] - r;
+    bounds_o->lower_y = p[1] - r;
+    bounds_o->lower_z = p[2] - r;
+    bounds_o->upper_x = p[0] + r;
+    bounds_o->upper_y = p[1] + r;
+    bounds_o->upper_z = p[2] + r;
 }
 
 void Sphere::IntersectFunc(const Sphere* spheres, RTCRay& rtcRay, size_t item) {
     Ray &ray = Ray::FromRTCRay(rtcRay);
     const Sphere& sphere = spheres[item];
     const Vector v = ray.org - sphere.m_Pos;
-    const float A = ray.dir.LengthSquared();
-    const float B = 2.0f * Dot(v,ray.dir);
-    const float C = v.LengthSquared() - sphere.m_Radius*sphere.m_Radius;
+    const float A = ray.dir.squaredNorm();
+    const float B = 2.0f * v.dot(ray.dir);
+    const float C = v.squaredNorm() - sphere.m_Radius*sphere.m_Radius;
     const float D = B*B - 4.0f*A*C;
     if (D < 0.0f) 
         return;
@@ -56,9 +56,9 @@ void Sphere::OccludedFunc(const Sphere* spheres, RTCRay& rtcRay, size_t item) {
     Ray &ray = Ray::FromRTCRay(rtcRay);
     const Sphere& sphere = spheres[item];
     const Vector v = ray.org - sphere.m_Pos;
-    const float A = ray.dir.LengthSquared();
-    const float B = 2.0f*Dot(v,ray.dir);
-    const float C = v.LengthSquared() - sphere.m_Radius*sphere.m_Radius;
+    const float A = ray.dir.squaredNorm();
+    const float B = 2.0f*v.dot(ray.dir);
+    const float C = v.squaredNorm() - sphere.m_Radius*sphere.m_Radius;
     const float D = B*B - 4.0f*A*C;
     if (D < 0.0f) return;
     const float Q = sqrtf(D);

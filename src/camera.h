@@ -2,7 +2,6 @@
 #define YAMCR_CAMERA_H__
 
 #include "ray.h"
-#include "point.h"
 #include "vector.h"
 
 namespace yamcr {

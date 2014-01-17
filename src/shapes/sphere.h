@@ -2,7 +2,7 @@
 #define YAMCR_SHAPES_SPHERE_H__
 
 #include "shape.h"
-#include "point.h"
+#include "vector.h"
 
 namespace yamcr {
 

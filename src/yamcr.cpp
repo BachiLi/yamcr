@@ -21,7 +21,7 @@
 
 using namespace yamcr;
 
-const int c_XRes = 512, c_YRes = 512, c_BlockSize = 32, c_Spp = 16;
+const int c_XRes = 512, c_YRes = 512, c_BlockSize = 32, c_Spp = 512;
 const char *c_Filename = "foo.exr";
 const Point c_CameraPos = Point(0.f, 0.f, -5.f);
 const Vector c_CameraDir = Vector(0.f, 0.f, 1.f);

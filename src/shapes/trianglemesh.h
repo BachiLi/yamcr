@@ -2,7 +2,7 @@
 #define YAMCR_SHAPES_TRIANGLEMESH_H__
 
 #include "shape.h"
-#include "point.h"
+#include "vector.h"
 #include <vector>
 
 namespace yamcr {

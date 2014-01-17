@@ -43,7 +43,7 @@ void BlockedRenderer::RenderBlock(int taskId) {
                         Ray shadowRay;
                         RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);
                         if(!m_Scene->Occluded(shadowRay))        
-                            L += Le*isect.bsdf->Eval(-ray.dir, shadowRay.dir)*AbsDot(isect.n, shadowRay.dir);
+                            L += Le*isect.bsdf->Eval(-ray.dir, shadowRay.dir)*std::abs(isect.n.dot(shadowRay.dir));
                     }
                 } 
                 m_Film->AddSample(x, y, L);

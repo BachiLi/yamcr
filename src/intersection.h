@@ -1,8 +1,7 @@
 #ifndef YAMCR_INTERSECTION_H__
 #define YAMCR_INTERSECTION_H__
 
-#include "point.h"
-#include "normal.h"
+#include "vector.h"
 #include "bsdfs/bsdf.h"
 #include <memory>
 

@@ -4,9 +4,7 @@
 #include "commondefs.h"
 #include <embree2/rtcore.h>
 #include <embree2/rtcore_ray.h>
-#include "point.h"
 #include "vector.h"
-#include "normal.h"
 #include <limits>
 
 namespace yamcr {
@@ -32,9 +30,9 @@ struct Ray {
 
     // Ray data
     Point org;
-    int32 align0;
+    int pad0;
     Vector dir;
-    int32 align1;
+    int pad1;
     float tnear;
     float tfar;
     float time;
@@ -42,7 +40,7 @@ struct Ray {
 
     // Hit data
     Normal Ng;
-    int32 align2;
+    int pad2;
     float u;
     float v;
     int32 geomID;

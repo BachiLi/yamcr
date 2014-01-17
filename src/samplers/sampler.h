@@ -1,7 +1,7 @@
 #ifndef YAMCR_SAMPLER_H__
 #define YAMCR_SAMPLER_H__
 
-#include "point.h"
+#include "vector.h"
 #include <memory>
 
 namespace yamcr {
