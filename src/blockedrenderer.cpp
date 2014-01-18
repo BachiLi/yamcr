@@ -7,9 +7,11 @@
 
 #include <ThreadPool.h>
 
+#include <fstream>
+
 namespace yamcr {
 
-void BlockedRenderer::Render() {
+void BlockedRenderer::Render() {    
     ThreadPool pool(m_NumThreads);
     std::vector<std::future<void>> results;    
     const int numTasks = m_TilesNumX * m_TilesNumY;
@@ -23,7 +25,7 @@ void BlockedRenderer::Render() {
     m_Film->Write();
 }
 
-void BlockedRenderer::RenderBlock(int taskId) {
+void BlockedRenderer::RenderBlock(int taskId) {    
     const int tileY = taskId / m_TilesNumX;
     const int tileX = taskId - tileY * m_TilesNumX;
     const int x0 = tileX * m_BlockSize;
@@ -34,16 +36,23 @@ void BlockedRenderer::RenderBlock(int taskId) {
 
     for(int y = x0; y < x1; y++) {
         for(int x = y0; x < y1; x++) {           
-            for(int s = 0; s < m_Spp; s++) {
+            for(int s = 0; s < m_Spp; s++) {                
                 Ray ray = m_Camera->GenerateRay(Point2(x, y) + localSampler->Next2D());
                 Intersection isect;
                 RGBSpectrum L(0.f);
-                if(m_Scene->Intersect(ray, &isect)) {
+                if(m_Scene->Intersect(ray, &isect)) {                   
                     for(auto it = m_Scene->GetLightIteratorBegin(); it != m_Scene->GetLightIteratorEnd(); it++) {
                         Ray shadowRay;
                         RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);
-                        if(!m_Scene->Occluded(shadowRay))        
-                            L += Le*isect.bsdf->Eval(-ray.dir, shadowRay.dir)*std::abs(isect.n.dot(shadowRay.dir));
+                        Normal Ns = isect.Ns;
+                        if(ray.dir.dot(Ns) > 0.f)
+                            Ns = - Ns;
+                        float cos = Ns.dot(shadowRay.dir);
+                        if(cos <= 0.f)
+                            continue;
+                        bool hit = m_Scene->Occluded(shadowRay);
+                        if(!hit)        
+                            L += Le*isect.bsdf->Eval(-ray.dir, shadowRay.dir)*cos;
                     }
                 } 
                 m_Film->AddSample(x, y, L);

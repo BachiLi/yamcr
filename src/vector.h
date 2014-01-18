@@ -3,18 +3,10 @@
 
 #include <Eigen/Dense>
 
-// Code shamelessly copied from Nori
+// Code shamelessly borrowed from Nori
 // http://www.cs.cornell.edu/Courses/cs6630/2012sp/nori/
 
 namespace yamcr {
-
-/* ===================================================================
-    This file contains a few templates and specializations that
-    provide 2/3D points, vectors, and normals over different
-    underlying data types. Points, vectors, and normals are distinct
-    in Nori, because they transform differently under homogeneous
-    coordinate transformations.
- * =================================================================== */
 
 template <typename Scalar, int Dimension>  struct TVector;
 template <typename Scalar, int Dimension>  struct TPoint;
@@ -130,29 +122,24 @@ public:
 /**
  * \brief 3-dimensional point representation with padding for better alignment
  */
-struct PointA : public Eigen::Matrix<float, 3, 1> {
+struct PointA : public TPoint<float, 3> {
 public:
-	enum {
-		Dimension = 3
-	};
-
 	typedef float                               Scalar;
 	typedef Eigen::Matrix<Scalar, Dimension, 1> Base;
 	typedef TVector<Scalar, Dimension>          VectorType;
 	typedef TPoint<Scalar, Dimension>           PointType;
 
-
 	/// Create a new point with constant component vlaues
 	inline PointA(Scalar value = 0.0f) { this->setConstant(value); }
 
 	/// Create a new 3D point
-	inline PointA(Scalar x, Scalar y, Scalar z) : Base(x, y, z) { }
+	inline PointA(Scalar x, Scalar y, Scalar z) : TPoint(x, y, z) { }
 
-	/// Construct a normal from MatrixBase (needed to play nice with Eigen)
+	/// Construct a point from MatrixBase (needed to play nice with Eigen)
 	template <typename Derived> inline PointA(const Eigen::MatrixBase<Derived>& p) 
-		: Base(p) { }
+		: TPoint(p) { }
 
-	/// Assign a normal from MatrixBase (needed to play nice with Eigen)
+	/// Assign a point from MatrixBase (needed to play nice with Eigen)
     template <typename Derived> PointA &operator=(const Eigen::MatrixBase<Derived>& p) {
 		this->Base::operator=(p);
 		return *this;
@@ -230,6 +217,7 @@ private:
 };
 
 typedef TVector<float, 3> Vector3;
+typedef TVector<float, 3> Vector4;
 typedef Vector3 Vector;
 
 typedef TPoint<float, 2> Point2;

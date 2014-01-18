@@ -20,13 +20,16 @@ struct Triangle {
 class TriangleMesh : public Shape {
 public:
     TriangleMesh(const std::vector<PointA> &vertices,
+                 const std::vector<Normal> &normals,
                  const std::vector<Triangle> &triangles) :
-        vertices(vertices), triangles(triangles) {}
+        m_Vertices(vertices), m_Normals(normals), m_Triangles(triangles) {}
 
     void Register(RTCScene rtcScene, unsigned int geomID);
+    void PostIntersect(Intersection &isect) const;
 private:
-    std::vector<PointA> vertices;
-    std::vector<Triangle> triangles;
+    std::vector<PointA> m_Vertices;
+    std::vector<Normal> m_Normals;
+    std::vector<Triangle> m_Triangles;
 };
 
 }

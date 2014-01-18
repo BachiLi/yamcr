@@ -84,4 +84,8 @@ void Sphere::Register(RTCScene scene, unsigned int geomID) {
     rtcSetOccludedFunction (scene, geomID, (RTCOccludedFunc )&OccludedFunc);
 }
 
+void Sphere::PostIntersect(Intersection &isect) const {
+    isect.Ns = isect.Ng;
+}
+
 }

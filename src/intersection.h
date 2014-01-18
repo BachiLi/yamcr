@@ -9,9 +9,11 @@ namespace yamcr {
 
 struct Intersection {    
     Point p;
-    Normal n;
+    float u, v;
+    Normal Ng, Ns;
     std::shared_ptr<BSDF> bsdf;
     float rayEpsilon;
+    uint32_t geomID, primID;
 };
 
 }

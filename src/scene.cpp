@@ -24,9 +24,13 @@ bool Scene::Intersect(Ray &ray, Intersection *isect) {
     rtcIntersect(m_RtcScene, ray.ToRTCRay());
     if(ray.geomID != -1) {
         isect->p = ray.org + ray.dir * ray.tfar;
-        isect->n = ray.Ng.normalized();
+        isect->u = ray.u; isect->v = ray.v;
+        isect->Ng = ray.Ng.normalized();       
         isect->bsdf = m_Primitives[ray.geomID]->bsdf;
-        isect->rayEpsilon = 1e-3f*ray.tfar;
+        isect->rayEpsilon = 1e-2f*ray.tfar; 
+        isect->geomID = ray.geomID;
+        isect->primID = ray.primID;
+        m_Primitives[ray.geomID]->shape->PostIntersect(*isect);
         return true;
     }
     return false;

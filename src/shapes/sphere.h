@@ -12,9 +12,11 @@ public:
         m_Pos(p), m_Radius(r), m_GeomID(-1) {}
 
     void Register(RTCScene scene, unsigned int geomID);
+    void PostIntersect(Intersection &isect) const;
+
     static void BoundsFunc(const Sphere *spheres, size_t items, RTCBounds *bounds_o);
     static void IntersectFunc(const Sphere *spheres, RTCRay &rtcRay, size_t items);
-    static void OccludedFunc(const Sphere *spheres, RTCRay &rtcRay, size_t items);
+    static void OccludedFunc(const Sphere *spheres, RTCRay &rtcRay, size_t items);    
 private:
     Point m_Pos;    
     float m_Radius;

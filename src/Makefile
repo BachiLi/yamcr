@@ -7,8 +7,8 @@ PTHREAD_LIB = -lpthread
 THREADPOOL_INCLUDE = -I../ThreadPool
 EIGEN_INCLUDE = -I../Eigen
 
-CC       = gcc-4.7
-CXX      = g++-4.7
+CC       = gcc
+CXX      = g++
 INCLUDES = $(OIIO_INCLUDE) $(EMBREE_INCLUDE) $(THREADPOOL_INCLUDE) $(EIGEN_INCLUDE) -I.
 LIBS     = $(OIIO_LIB) $(EMBREE_LIB) $(BOOST_LIB) $(PTHREAD_LIB)
 CXXFLAGS = $(INCLUDES) -std=c++11 -O3 -march=native

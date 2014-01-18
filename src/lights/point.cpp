@@ -8,7 +8,7 @@ RGBSpectrum PointLight::SampleDirect(const Intersection &isect, Ray &ray) const 
     float dist = v.norm();
     ray.dir = v / dist;
     ray.tnear = isect.rayEpsilon;
-    ray.tfar = dist;
+    ray.tfar = dist - isect.rayEpsilon;
     return m_Intensity / (dist*dist);
 }
 

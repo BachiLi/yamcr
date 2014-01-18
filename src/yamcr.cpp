@@ -18,37 +18,39 @@
 #include "film.h"
 #include "intersection.h"
 #include "blockedrenderer.h"
+#include "objloader.h"
 
 using namespace yamcr;
 
-const int c_XRes = 512, c_YRes = 512, c_BlockSize = 32, c_Spp = 512;
+const int c_XRes = 512, c_YRes = 512, c_BlockSize = 512, c_Spp = 16;
 const char *c_Filename = "foo.exr";
-const Point c_CameraPos = Point(0.f, 0.f, -5.f);
-const Vector c_CameraDir = Vector(0.f, 0.f, 1.f);
+const Point c_CameraPos = Point(0.f, 1.f, -5.f);
+const Vector c_CameraDir = (Point(0.f, 0.f, -1.f) - c_CameraPos).normalized();
 const Vector c_CameraUp = Vector(0.f, 1.f, 0.f);
 
 void CreatePrimitives(std::vector<std::shared_ptr<Primitive>> &prims) {
     {
-        std::shared_ptr<Sphere> shape =
-            std::make_shared<Sphere>(Point(0.f, 0.f, 0.5f), 0.5f);
+        ObjLoader loader(true);
+        std::shared_ptr<TriangleMesh> shape =
+            loader.Load(Eigen::Affine3f(Eigen::Translation3f(0.f, -1.5f, 0.f)*Eigen::Scaling(1.f/50.f)), "models/teapot.obj");
         std::shared_ptr<BSDF> bsdf =
             std::make_shared<Lambertian>(RGBSpectrum(0.75f, 0.25f, 0.25f));
         std::shared_ptr<Primitive> prim =
             std::make_shared<Primitive>(shape, bsdf);
-        prims.push_back(prim);
+        prims.push_back(prim);       
     }
 
     {
         std::vector<PointA> vertices;
-        vertices.push_back(PointA(-4.f, -1.5f,  10.f));
-        vertices.push_back(PointA(-4.f, -1.5f,  0.f));
-        vertices.push_back(PointA( 4.f, -1.5f,  0.f));
-        vertices.push_back(PointA( 4.f, -1.5f,  10.f));
+        vertices.push_back(PointA(-20.f, -1.5f, 15.f));
+        vertices.push_back(PointA(-20.f, -1.5f, -5.f));
+        vertices.push_back(PointA( 20.f, -1.5f, -5.f));
+        vertices.push_back(PointA( 20.f, -1.5f, 15.f));
         std::vector<Triangle> triangles;
         triangles.push_back(Triangle(0, 1, 2));
         triangles.push_back(Triangle(0, 2, 3));
         std::shared_ptr<TriangleMesh> shape = 
-            std::make_shared<TriangleMesh>(vertices, triangles);
+            std::make_shared<TriangleMesh>(vertices, std::vector<Normal>(), triangles);
         std::shared_ptr<BSDF> bsdf = 
             std::make_shared<Lambertian>(RGBSpectrum(0.25f, 0.75f, 0.25f));
         std::shared_ptr<Primitive> prim =
@@ -59,11 +61,8 @@ void CreatePrimitives(std::vector<std::shared_ptr<Primitive>> &prims) {
 
 void CreateLights(std::vector<std::shared_ptr<Light>> &lights) {
     lights.push_back(std::make_shared<PointLight>(
-                Point(4.f, 4.f, -1.0f),
-                RGBSpectrum(70.f, 70.f, 70.f)));
-    lights.push_back(std::make_shared<PointLight>(
-                Point(0.f, 0.f, -5.f),
-                RGBSpectrum(5.f, 5.f, 5.f)));
+                Point(10.f, 10.f, -1.0f),
+                RGBSpectrum(1000.f, 1000.f, 1000.f)));
 }
 
 int GetNumThreads() {
