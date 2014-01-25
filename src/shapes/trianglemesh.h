@@ -39,14 +39,16 @@ class TriangleMesh : public Shape {
 public:
     TriangleMesh(const std::vector<PointA> &vertices,
                  const std::vector<Normal> &normals,
+                 const std::vector<Point2> &sts,
                  const std::vector<Triangle> &triangles) :
-        m_Vertices(vertices), m_Normals(normals), m_Triangles(triangles) {}
+        m_Vertices(vertices), m_Normals(normals), m_STs(sts), m_Triangles(triangles) {}
 
     void Register(RTCScene rtcScene, unsigned int geomID);
     void PostIntersect(Intersection &isect) const;
 private:
     std::vector<PointA> m_Vertices;
     std::vector<Normal> m_Normals;
+    std::vector<Point2> m_STs;
     std::vector<Triangle> m_Triangles;
 };
 

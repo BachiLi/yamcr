@@ -20,16 +20,20 @@
 #define YAMCR_BSDFS_LAMBERTIAN_H__
 
 #include "bsdf.h"
+#include "textures/texture.h"
+#include <memory>
 
 namespace yamcr {
 
 class Lambertian : public BSDF {
 public:
-    Lambertian(const RGBSpectrum &Kd)
+    Lambertian(const std::shared_ptr<TextureSpectrum> &Kd)
         : m_Kd(Kd) {}
-    RGBSpectrum Eval(const Vector &wi, const Vector &wo) const;
+    RGBSpectrum Eval(
+            const Intersection &isect,
+            const Vector &wi, const Vector &wo) const;
 private:
-    RGBSpectrum m_Kd;
+    std::shared_ptr<TextureSpectrum> m_Kd;
 };
 
 }

@@ -18,6 +18,7 @@
 
 #include "commondefs.h"
 #include <OpenImageIO/imageio.h>
+#include <OpenImageIO/imagebufalgo.h>
 #include <stdint.h>
 #include <embree2/rtcore.h>
 #include <limits>
@@ -32,6 +33,8 @@
 #include "lights/point.h"
 #include "samplers/random.h"
 #include "bsdfs/lambertian.h"
+#include "textures/constant.h"
+#include "textures/bitmap.h"
 #include "spectrum.h"
 #include "film.h"
 #include "intersection.h"
@@ -51,8 +54,19 @@ void CreatePrimitives(std::vector<std::shared_ptr<Primitive>> &prims) {
         ObjLoader loader(true);
         std::shared_ptr<TriangleMesh> shape =
             loader.Load(Eigen::Affine3f(Eigen::Translation3f(0.f, -1.5f, 0.f)*Eigen::Scaling(1.f/50.f)), "models/teapot.obj");
+        float dark[] = {0.1f, 0.1f, 0.1f};
+        float light[] = {0.75f, 0.25f, 0.25f};
+        OpenImageIO::ImageBuf cb(OpenImageIO::ImageSpec(512, 512, 3, OpenImageIO::TypeDesc::FLOAT));
+        OpenImageIO::ImageBufAlgo::checker(cb, 32, 32, 1, dark, light);
+        const std::string cbName = std::string("checker.exr");
+        cb.write(cbName);
+        std::shared_ptr<TextureSpectrum> texture = 
+            std::make_shared<BitmapTextureSpectrum>(cbName);
+
+        //std::shared_ptr<TextureSpectrum> texture = 
+        //    std::make_shared<ConstantTextureSpectrum>(RGBSpectrum(0.25f, 0.75f, 0.25f)); 
         std::shared_ptr<BSDF> bsdf =
-            std::make_shared<Lambertian>(RGBSpectrum(0.75f, 0.25f, 0.25f));
+            std::make_shared<Lambertian>(texture);
         std::shared_ptr<Primitive> prim =
             std::make_shared<Primitive>(shape, bsdf);
         prims.push_back(prim);       
@@ -68,9 +82,11 @@ void CreatePrimitives(std::vector<std::shared_ptr<Primitive>> &prims) {
         triangles.push_back(Triangle(0, 1, 2));
         triangles.push_back(Triangle(0, 2, 3));
         std::shared_ptr<TriangleMesh> shape = 
-            std::make_shared<TriangleMesh>(vertices, std::vector<Normal>(), triangles);
+            std::make_shared<TriangleMesh>(vertices, std::vector<Normal>(), std::vector<Point2>(), triangles);
+        std::shared_ptr<TextureSpectrum> texture = 
+            std::make_shared<ConstantTextureSpectrum>(RGBSpectrum(0.25f, 0.75f, 0.25f)); 
         std::shared_ptr<BSDF> bsdf = 
-            std::make_shared<Lambertian>(RGBSpectrum(0.25f, 0.75f, 0.25f));
+            std::make_shared<Lambertian>(texture);
         std::shared_ptr<Primitive> prim =
             std::make_shared<Primitive>(shape, bsdf);
         prims.push_back(prim);

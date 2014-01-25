@@ -66,6 +66,16 @@ public:
 		return *this;
     }
 
+	/// Construct a vector from Array (needed to play nice with Eigen)
+	template <typename Derived> inline TVector(const Eigen::ArrayBase<Derived>& p) 
+		: Base(p) { }
+
+	/// Assign a vector from ArrayBase (needed to play nice with Eigen)
+    template <typename Derived> TVector &operator=(const Eigen::ArrayBase<Derived>& p) {
+		this->Base::operator=(p);
+		return *this;
+    }
+
 };
 
 /**
@@ -103,7 +113,17 @@ public:
 		this->Base::operator=(p);
 		return *this;
     }
+ 
+	/// Construct a point from ArrayBase (needed to play nice with Eigen)
+	template <typename Derived> inline TPoint(const Eigen::ArrayBase<Derived>& p) 
+		: Base(p) { }
 
+	/// Assign a point from ArrayBase (needed to play nice with Eigen)
+    template <typename Derived> TPoint &operator=(const Eigen::ArrayBase<Derived>& p) {
+		this->Base::operator=(p);
+		return *this;
+    }
+ 
 };
 
 /**
@@ -136,6 +156,18 @@ public:
 		this->Base::operator=(p);
 		return *this;
     }
+
+	/// Construct a normal from ArrayBase (needed to play nice with Eigen)
+	template <typename Derived> inline Normal3f(const Eigen::ArrayBase<Derived>& p) 
+		: Base(p) { }
+
+	/// Assign a normal from ArrayBase (needed to play nice with Eigen)
+    template <typename Derived> Normal3f &operator=(const Eigen::ArrayBase<Derived>& p) {
+		this->Base::operator=(p);
+		return *this;
+    }
+
+
 };
 
 /**
@@ -163,6 +195,17 @@ public:
 		this->Base::operator=(p);
 		return *this;
     }
+
+	/// Construct a point from ArrayBase (needed to play nice with Eigen)
+	template <typename Derived> inline PointA(const Eigen::ArrayBase<Derived>& p) 
+		: TPoint(p) { }
+
+	/// Assign a point from ArrayBase (needed to play nice with Eigen)
+    template <typename Derived> PointA &operator=(const Eigen::ArrayBase<Derived>& p) {
+		this->Base::operator=(p);
+		return *this;
+    }
+ 
 private:
     int pad;
 };
@@ -170,7 +213,7 @@ private:
 /**
  * \brief 3-dimensional vector representation with padding for better alignment
  */
-struct VectorA : public Eigen::Matrix<float, 3, 1> {
+struct VectorA : public TVector<float, 3> {
 public:
 	enum {
 		Dimension = 3
@@ -186,14 +229,24 @@ public:
 	inline VectorA(Scalar value = 0.0f) { this->setConstant(value); }
 
 	/// Create a new 3D point
-	inline VectorA(Scalar x, Scalar y, Scalar z) : Base(x, y, z) { }
+	inline VectorA(Scalar x, Scalar y, Scalar z) : TVector(x, y, z) { }
 
 	/// Construct a normal from MatrixBase (needed to play nice with Eigen)
 	template <typename Derived> inline VectorA(const Eigen::MatrixBase<Derived>& p) 
-		: Base(p) { }
+		: TVector(p) { }
 
 	/// Assign a normal from MatrixBase (needed to play nice with Eigen)
     template <typename Derived> VectorA &operator=(const Eigen::MatrixBase<Derived>& p) {
+		this->Base::operator=(p);
+		return *this;
+    }
+
+	/// Construct a vector from ArrayBase (needed to play nice with Eigen)
+	template <typename Derived> inline VectorA(const Eigen::ArrayBase<Derived>& p) 
+		: TVector(p) { }
+
+	/// Assign a vector from ArrayBase (needed to play nice with Eigen)
+    template <typename Derived> VectorA &operator=(const Eigen::ArrayBase<Derived>& p) {
 		this->Base::operator=(p);
 		return *this;
     }
@@ -231,12 +284,23 @@ public:
 		this->Base::operator=(p);
 		return *this;
     }
+
+	/// Construct a normal from ArrayBase (needed to play nice with Eigen)
+	template <typename Derived> inline NormalA(const Eigen::ArrayBase<Derived>& p) 
+		: Base(p) { }
+
+	/// Assign a normal from ArrayBase (needed to play nice with Eigen)
+    template <typename Derived> NormalA &operator=(const Eigen::ArrayBase<Derived>& p) {
+		this->Base::operator=(p);
+		return *this;
+    }
 private:
     int pad;
 };
 
+typedef TVector<float, 2> Vector2;
 typedef TVector<float, 3> Vector3;
-typedef TVector<float, 3> Vector4;
+typedef TVector<float, 4> Vector4;
 typedef Vector3 Vector;
 
 typedef TPoint<float, 2> Point2;

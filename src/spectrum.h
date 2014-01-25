@@ -33,6 +33,10 @@ namespace yamcr {
  */
 template <typename T, int N>
 struct TSpectrum {    
+    enum {
+        Dimension = N
+    };
+
     TSpectrum() {}
     
     explicit TSpectrum(T v) {
@@ -146,14 +150,18 @@ struct RGBSpectrum : public TSpectrum<float, 3> {
     RGBSpectrum(const TSpectrum &spec) {
         data = spec.data;
     }
-    RGBSpectrum(float v) {
+    explicit RGBSpectrum(float v) {
         data[0] = data[1] = data[2] = v;
     }
-    RGBSpectrum(float r, float g, float b) {
+    explicit RGBSpectrum(float r, float g, float b) {
         data[0] = r;
         data[1] = g;
         data[2] = b;
     }
+    explicit RGBSpectrum(const std::array<float,3> &spec) {
+        data = spec;
+    }
+    
 };
 
 }

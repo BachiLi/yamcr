@@ -25,9 +25,12 @@
 
 namespace yamcr {
 
+class BSDF;
+
 struct Intersection {    
     Point p;
-    float u, v;
+    Point2 uv;
+    Point2 st;
     Normal Ng, Ns;
     std::shared_ptr<BSDF> bsdf;
     float rayEpsilon;

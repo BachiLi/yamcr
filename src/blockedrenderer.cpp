@@ -70,7 +70,7 @@ void BlockedRenderer::RenderBlock(int taskId) {
                             continue;
                         bool hit = m_Scene->Occluded(shadowRay);
                         if(!hit)        
-                            L += Le*isect.bsdf->Eval(-ray.dir, shadowRay.dir)*cos;
+                            L += Le*isect.bsdf->Eval(isect, -ray.dir, shadowRay.dir)*cos;
                     }
                 } 
                 m_Film->AddSample(x, y, L);

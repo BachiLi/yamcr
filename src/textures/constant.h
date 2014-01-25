@@ -16,24 +16,26 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef YAMCR_BSDFS_BSDF_H__
-#define YAMCR_BSDFS_BSDF_H__
+#ifndef YAMCR_TEXTURES_CONSTANT_H__
 
-#include "spectrum.h"
-#include "vector.h"
-#include "intersection.h"
+#include "texture.h"
 
 namespace yamcr {
 
-struct Intersection;
-
-class BSDF {
+template <int nChannels>
+class ConstantTexture : public Texture<nChannels> {
 public:
-    virtual RGBSpectrum Eval(
-            const Intersection &isect,
-            const Vector &wi, const Vector &wo) const = 0;
+    ConstantTexture(const RGBSpectrum &val)
+        : m_Val(val.data) {}
+    virtual std::array<float, nChannels> Eval(const Point2 &st) const {
+        return m_Val;
+    }
+private: 
+    const std::array<float, nChannels> m_Val;
 };
+
+typedef ConstantTexture<RGBSpectrum::Dimension> ConstantTextureSpectrum;
 
 }
 
-#endif //YAMCR_BSDFS_BSDF_H__
+#endif //YAMCR_TEXTURES_CONSTANT_H__

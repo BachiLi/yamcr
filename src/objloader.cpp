@@ -27,6 +27,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <cmath>
+#include <map>
 
 // trim from start
 static inline std::string &ltrim(std::string &s) {
@@ -49,25 +50,61 @@ static std::vector<int> splitFaceStr(const std::string &s) {
     std::vector<int> result;
     size_t prev = 0;
     size_t found = s.find_first_of("/");
-    if(found == std::string::npos) {
-        result.push_back(std::stoi(s));
-        return result;
-    }
     while(found != std::string::npos) {
         if(found - prev > 0)
             result.push_back(std::stoi(s.substr(prev, found - prev)));
         prev = found + 1;
         found = s.find_first_of("/", found + 1);
     }
+    result.push_back(std::stoi(s.substr(prev)));
+
+    while(result.size() < 3)
+        result.push_back(0);
+
     return result;
 }
 
 namespace yamcr {
 
+struct ObjVertex {
+    ObjVertex(const std::vector<int> &id)
+        : v(id[0]-1), vt(id[1]-1), vn(id[2]-1) {}
+
+    bool operator<(const ObjVertex &vertex) const {
+        if(v != vertex.v) return v < vertex.v;
+        if(vt != vertex.vt) return vt < vertex.vt;
+        if(vn != vertex.vn) return vn < vertex.vn;
+        return false;
+    }
+
+    int v, vt, vn;
+};
+
+size_t GetVertexId(const ObjVertex &vertex, 
+        const std::vector<Point> &posPool, const std::vector<Point2> &stPool,
+        std::vector<PointA> &pos, std::vector<Point2> &st, 
+        std::map<ObjVertex, size_t> &vertexMap) {
+    auto it = vertexMap.find(vertex);
+    if(it != vertexMap.end()) {
+        return it->second;
+    }
+    size_t id = pos.size();
+    pos.push_back(PointA(posPool[vertex.v]));
+    if(vertex.vt != -1)
+        st.push_back(stPool[vertex.vt]);
+    vertexMap[vertex] = id;
+    return id;
+}
+
 std::shared_ptr<TriangleMesh> ObjLoader::Load(
         const Transform &obj2world, const std::string &filename) {
-    std::vector<PointA> vertices;
+    std::vector<Point> posPool;
     std::vector<Triangle> triangles;
+    std::vector<Point2> stPool;
+    std::map<ObjVertex, size_t> vertexMap;
+
+    std::vector<PointA> positions;
+    std::vector<Point2> sts;
 
     std::ifstream ifs(filename.c_str(), std::ifstream::in);
     if(!ifs.is_open())
@@ -86,29 +123,41 @@ std::shared_ptr<TriangleMesh> ObjLoader::Load(
             float x, y, z, w = 1.f; 
             ss >> x >> y >> z >> w; 
             float invW = 1.f/w;
-            vertices.push_back(obj2world*PointA(x*invW, y*invW, z*invW));            
+            posPool.push_back(obj2world*Point(x*invW, y*invW, z*invW));            
+        } else if(token == "vt") {
+            float s, t, w;
+            ss >> s >> t >> w;
+            stPool.push_back(Point2(s, t));
         } else if(token == "f") {
-            std::string i1, i2, i3;
-            ss >> i1 >> i2 >> i3;
+            std::string i0, i1, i2;
+            ss >> i0 >> i1 >> i2;
+            std::vector<int> i0f = splitFaceStr(i0);
             std::vector<int> i1f = splitFaceStr(i1);
             std::vector<int> i2f = splitFaceStr(i2);
-            std::vector<int> i3f = splitFaceStr(i3);
-            triangles.push_back(Triangle(i1f[0]-1, i2f[0]-1, i3f[0]-1));            
-            std::string i4;
-            if(ss >> i4) {
-                std::vector<int> i4f = splitFaceStr(i4);
-                triangles.push_back(Triangle(i4f[0]-1, i1f[0]-1, i3f[0]-1));
+
+            ObjVertex v0(i0f), v1(i1f), v2(i2f);
+            size_t v0id = GetVertexId(v0, posPool, stPool, positions, sts, vertexMap);
+            size_t v1id = GetVertexId(v1, posPool, stPool, positions, sts, vertexMap);
+            size_t v2id = GetVertexId(v2, posPool, stPool, positions, sts, vertexMap);            
+            triangles.push_back(Triangle(v0id, v1id, v2id));
+
+            std::string i3;
+            if(ss >> i3) {
+                std::vector<int> i3f = splitFaceStr(i3);
+                ObjVertex v3(i3f);               
+                size_t v3id = GetVertexId(v3, posPool, stPool, positions, sts, vertexMap);
+                triangles.push_back(Triangle(v3id, v0id, v2id));
             }
-            std::string i5;
-            if(ss >> i5) 
+            std::string i4;
+            if(ss >> i4) 
                 throw std::runtime_error("The object file contains n-gon (n>4) that we do not support.");
         } // Currently ignore other tokens
     }
 
     std::vector<Normal> normals;
     if(m_ComputeNormals)
-        ComputeNormals(vertices, triangles, normals);
-    return std::make_shared<TriangleMesh>(vertices, normals, triangles);
+        ComputeNormals(positions, triangles, normals);
+    return std::make_shared<TriangleMesh>(positions, normals, sts, triangles);
 }
 
 // Numerical robust computation of angle between unit vectors
@@ -121,10 +170,9 @@ template <typename VectorType> inline float UnitAngle(const VectorType &u, const
 
 void ObjLoader::ComputeNormals(const std::vector<PointA> &vertices, const std::vector<Triangle> &triangles, 
         std::vector<Normal> &normals) {
-    normals.resize(vertices.size());
+    normals.resize(vertices.size(), Normal(0.f));
 
-    // Thuermer and Wuethrich, "Computing Vertex Normal from Polygonal Faces"
-    // Code borrowed from mitsuba
+    //Nelson Max, "Computing Vertex Normals from Facet Normals", 1999
     for(auto &tri : triangles) {
         Normal n(0.f);
         for (int i=0; i<3; ++i) {
@@ -140,7 +188,7 @@ void ObjLoader::ComputeNormals(const std::vector<PointA> &vertices, const std::v
                 n /= length;
             }
             float angle = UnitAngle(sideA.normalized(), sideB.normalized());
-            normals[tri.idx[i]] += n * angle;
+            normals[tri.idx[i]] += n * angle;            
         }
     }
     

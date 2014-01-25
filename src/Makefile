@@ -11,9 +11,9 @@ CC       = gcc
 CXX      = g++
 INCLUDES = $(OIIO_INCLUDE) $(EMBREE_INCLUDE) $(THREADPOOL_INCLUDE) $(EIGEN_INCLUDE) -I.
 LIBS     = $(OIIO_LIB) $(EMBREE_LIB) $(BOOST_LIB) $(PTHREAD_LIB)
-CXXFLAGS = $(INCLUDES) -std=c++11 -O3 -march=native
+CXXFLAGS = $(INCLUDES) -std=c++11 -O3 -march=native -Wall
 DEFS     = -DUSE_SSE
-SRCS     = $(wildcard *.cpp) $(wildcard lights/*.cpp) $(wildcard shapes/*.cpp) $(wildcard samplers/*.cpp) $(wildcard bsdfs/*.cpp)
+SRCS     = $(wildcard *.cpp) $(wildcard lights/*.cpp) $(wildcard shapes/*.cpp) $(wildcard samplers/*.cpp) $(wildcard bsdfs/*.cpp) $(wildcard textures/*.cpp)
 OBJS     = $(addprefix objs/, $(subst /,_,$(SRCS:.cpp=.o)))
 HDRS     = $(wildcard *.h) $(wildcard */*.h)
 
@@ -35,6 +35,9 @@ objs/samplers_%.o: samplers/%.cpp $(HDRS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS) $(DEFS)
 
 objs/bsdfs_%.o: bsdfs/%.cpp $(HDRS)
+	$(CXX) -c -o $@ $< $(CXXFLAGS) $(DEFS)
+
+objs/textures_%.o: textures/%.cpp $(HDRS)
 	$(CXX) -c -o $@ $< $(CXXFLAGS) $(DEFS)
 
 ../bin/yamcr: $(OBJS)

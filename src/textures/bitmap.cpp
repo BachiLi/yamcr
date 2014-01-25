@@ -16,24 +16,12 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef YAMCR_BSDFS_BSDF_H__
-#define YAMCR_BSDFS_BSDF_H__
+#include "bitmap.h"
 
-#include "spectrum.h"
-#include "vector.h"
-#include "intersection.h"
 
 namespace yamcr {
 
-struct Intersection;
-
-class BSDF {
-public:
-    virtual RGBSpectrum Eval(
-            const Intersection &isect,
-            const Vector &wi, const Vector &wo) const = 0;
-};
+OpenImageIO::TextureSystem* BitmapTextureSystem::s_TextureSystem = 
+    OpenImageIO::TextureSystem::create();
 
 }
-
-#endif //YAMCR_BSDFS_BSDF_H__

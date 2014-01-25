@@ -26,12 +26,12 @@ namespace yamcr {
 
 class Camera {
 public:
-    Camera(const Point &pos, const Vector &up, const Vector &dir, 
+    Camera(const Point &pos, const Vector &dir, const Vector &up, 
            int xres, int yres);
     Ray GenerateRay(const Point2 &screenPos) const;
 private:
     const Point m_Pos;
-    const Vector m_Up, m_Dir, m_Right;
+    const Vector m_Dir, m_Up, m_Right;
     const int m_XRes, m_YRes;
 };
 
