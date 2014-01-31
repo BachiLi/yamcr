@@ -65,7 +65,7 @@ struct Ray {
     int32 primID;
     int32 instID;
 };
- 
+
 }
 
 #endif //YAMCR_RAY_H__

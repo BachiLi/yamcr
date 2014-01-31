@@ -38,7 +38,8 @@ class BitmapTexture : public Texture<nChannels> {
 public:
     BitmapTexture(const std::string &filename, 
             const Vector2 &stScaler = Vector2(1.f, 1.f));
-    std::array<float, nChannels> Eval(const Point2 &uv) const;
+    std::array<float, nChannels> Eval(const Point2 &st,
+            const Vector2 &dSTdx, const Vector2 &dSTdy) const;
 private:
     OpenImageIO::ustring m_Filename;
     // Dealing with weird non-constant declaration
@@ -49,16 +50,24 @@ private:
 template<int nChannels>
 BitmapTexture<nChannels>::BitmapTexture(const std::string &filename, const Vector2 &stScaler) {
     m_Filename = OpenImageIO::ustring(filename);
+    m_Options.swrap = OpenImageIO::TextureOptions::Wrap::WrapPeriodic;
+    m_Options.twrap = OpenImageIO::TextureOptions::Wrap::WrapPeriodic;
     m_Options.nchannels = nChannels;
     m_STScaler = stScaler;
 }
 
 template<int nChannels>
-std::array<float, nChannels> BitmapTexture<nChannels>::Eval(const Point2 &st) const {
+std::array<float, nChannels> BitmapTexture<nChannels>::Eval(const Point2 &st,
+            const Vector2 &dSTdx, const Vector2 &dSTdy) const {
     Point2 sST = m_STScaler.array()*st.array();
+    Vector2 sdSTdx = m_STScaler.array()*dSTdx.array();
+    Vector2 sdSTdy = m_STScaler.array()*dSTdy.array();
+    /*fprintf(stderr, "sdSTdx:%f %f, sdSTdy:%f %f\n",
+            sdSTdx[0], sdSTdx[1],
+            sdSTdy[0], sdSTdy[1]);*/
     std::array<float, nChannels> result;
     if(!BitmapTextureSystem::s_TextureSystem->texture(m_Filename, m_Options, sST[0], sST[1], 
-                0.f, 0.f, 0.f, 0.f, result.data()))
+                sdSTdx[0], sdSTdx[1], sdSTdy[0], sdSTdy[1], result.data()))
         throw std::runtime_error("Error during texture lookup");
     return result;
 }

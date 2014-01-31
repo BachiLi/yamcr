@@ -24,6 +24,7 @@
 #define YAMCR_GEOMETRY_VECTOR_H__
 
 #include <Eigen/Dense>
+#include "fastmath.h"
 
 namespace yamcr {
 
@@ -311,6 +312,17 @@ typedef Point3 Point;
 
 typedef Normal3f Normal;
 
+inline void CoordinateSystem(const Vector &a, Vector &b, Vector &c) {
+    if (std::abs(a.x()) > std::abs(a.y())) {
+        float invLen = Rsqrt(a.x() * a.x() + a.z() * a.z());
+        c = Vector(a.z() * invLen, 0.0f, -a.x() * invLen);
+    } else {
+        float invLen = Rsqrt(a.y() * a.y() + a.z() * a.z());
+        c = Vector(0.0f, a.z() * invLen, -a.y() * invLen);
+    }
+    b = c.cross(a);
 }
+
+} // namespace yamcr
 
 #endif //YAMCR_GEOMETRY_VECTOR_H__

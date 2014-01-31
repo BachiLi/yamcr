@@ -25,7 +25,7 @@ namespace yamcr {
 RGBSpectrum Lambertian::Eval(
         const Intersection &isect,
         const Vector &wi, const Vector &wo) const {
-    return RGBSpectrum(m_Kd->Eval(isect.st)) / (float)M_PI;
+    return RGBSpectrum(m_Kd->Eval(isect.st, isect.dSTdx, isect.dSTdy)) / (float)M_PI;
 }
 
 }

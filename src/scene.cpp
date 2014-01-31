@@ -38,17 +38,23 @@ Scene::~Scene() {
     rtcDeleteScene(m_RtcScene);
 }
 
-bool Scene::Intersect(Ray &ray, Intersection *isect) {
+bool Scene::Intersect(Ray &ray, Intersection *isect, RayDifferential *rayDiff) {
     rtcIntersect(m_RtcScene, ray.ToRTCRay());
     if(ray.geomID != -1) {
         isect->p = ray.org + ray.dir * ray.tfar;
         isect->uv = Point2(ray.u, ray.v);
         isect->Ng = ray.Ng.normalized();       
         isect->bsdf = m_Primitives[ray.geomID]->bsdf;
-        isect->rayEpsilon = 1e-2f*ray.tfar; 
+        isect->rayEpsilon = 1e-3f*ray.tfar; 
         isect->geomID = ray.geomID;
         isect->primID = ray.primID;
-        m_Primitives[ray.geomID]->shape->PostIntersect(*isect);
+        m_Primitives[ray.geomID]->shape->PostIntersect(*isect);        
+        if(rayDiff) {
+            rayDiff->Transfer(ray.dir, isect->Ng, ray.tfar);
+            isect->ComputeTextureDifferential(*rayDiff);
+        } else {
+            isect->dSTdx = isect->dSTdy = Vector2(0.f);
+        }
         return true;
     }
     return false;

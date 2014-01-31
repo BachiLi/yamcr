@@ -21,6 +21,7 @@
 
 #include "ray.h"
 #include "vector.h"
+#include "raydifferential.h"
 
 namespace yamcr {
 
@@ -28,7 +29,7 @@ class Camera {
 public:
     Camera(const Point &pos, const Vector &dir, const Vector &up, 
            int xres, int yres);
-    Ray GenerateRay(const Point2 &screenPos) const;
+    Ray GenerateRay(const Point2 &screenPos, RayDifferential *rayDiff) const;
 private:
     const Point m_Pos;
     const Vector m_Dir, m_Up, m_Right;

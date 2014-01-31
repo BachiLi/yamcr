@@ -42,20 +42,22 @@ void TriangleMesh::Register(RTCScene rtcScene, unsigned int geomID) {
 
 void TriangleMesh::PostIntersect(Intersection &isect) const {
     const Triangle &tri = m_Triangles[isect.primID];
-    //const PointA &p0 = m_Vertices[tri.idx[0]];
-    //const PointA &p1 = m_Vertices[tri.idx[1]];
-    //const PointA &p2 = m_Vertices[tri.idx[2]];
-    const Normal &Ng = isect.Ng;    
+    
+    Normal &Ng = isect.Ng;    
     float u = isect.uv[0], v = isect.uv[1], w = 1.0f-u-v;
+    Point2 st0, st1, st2;
     if(m_STs.size() == 0) {
+        st0 = Point2(0.f, 0.f);
+        st1 = Point2(1.f, 0.f);
+        st2 = Point2(0.f, 1.f);
         isect.st = isect.uv;
     } else {        
-        const Point2 &st0 = m_STs[tri.idx[0]];
-        const Point2 &st1 = m_STs[tri.idx[1]];
-        const Point2 &st2 = m_STs[tri.idx[2]];  
+        st0 = m_STs[tri.idx[0]];
+        st1 = m_STs[tri.idx[1]];
+        st2 = m_STs[tri.idx[2]];
         isect.st = w*st0 + u*st1 + v*st2;
     }
-    
+
     if(m_Normals.size() == 0) {
         isect.Ns = Ng; 
     } else {
@@ -75,6 +77,28 @@ void TriangleMesh::PostIntersect(Intersection &isect) const {
         isect.Ns = Ns;
     }
 
+    if(Ng.squaredNorm() <= 0.f) { 
+        // Degenerated triangle
+        isect.dPds = Vector(0.f);
+        isect.dPdt = Vector(0.f);
+    } else {
+        const PointA &p0 = m_Vertices[tri.idx[0]];
+        const PointA &p1 = m_Vertices[tri.idx[1]];
+        const PointA &p2 = m_Vertices[tri.idx[2]];
+
+        Vector dP1 = p1 - p0, dP2 = p2 - p0;
+        Vector2 dST1 = st1 - st0, dST2 = st2 - st0;
+
+		float determinant = dST1[0] * dST2[1] - dST1[1] * dST2[0];
+        if(determinant == 0.f) {
+            // Degenerated st
+            CoordinateSystem(Ng, isect.dPds, isect.dPdt);
+        } else {
+            float invDet = Rcp(determinant);
+            isect.dPds = ( dST2[1] * dP1 - dST1[1] * dP2)*invDet;
+            isect.dPdt = (-dST2[0] * dP1 + dST1[0] * dP2)*invDet;
+        }       
+    }
 }
 
 }

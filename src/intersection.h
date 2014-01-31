@@ -21,6 +21,7 @@
 
 #include "vector.h"
 #include "bsdfs/bsdf.h"
+#include "raydifferential.h"
 #include <memory>
 
 namespace yamcr {
@@ -28,6 +29,8 @@ namespace yamcr {
 class BSDF;
 
 struct Intersection {    
+    void ComputeTextureDifferential(const RayDifferential &rayDiff);
+
     Point p;
     Point2 uv;
     Point2 st;
@@ -35,6 +38,9 @@ struct Intersection {
     std::shared_ptr<BSDF> bsdf;
     float rayEpsilon;
     uint32_t geomID, primID;
+    Vector dPds, dPdt;
+
+    Vector2 dSTdx, dSTdy;    
 };
 
 }

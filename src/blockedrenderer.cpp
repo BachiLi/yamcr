@@ -55,10 +55,13 @@ void BlockedRenderer::RenderBlock(int taskId) {
     for(int y = x0; y < x1; y++) {
         for(int x = y0; x < y1; x++) {           
             for(int s = 0; s < m_Spp; s++) {                
-                Ray ray = m_Camera->GenerateRay(Point2(x, y) + localSampler->Next2D());
+                RayDifferential rayDiff;
+                Vector2 offset = localSampler->Next2D();
+                Ray ray = m_Camera->GenerateRay(Point2(x, y) + offset, &rayDiff);
+                rayDiff.Scale(1.f/std::sqrt(m_Spp));
                 Intersection isect;
-                RGBSpectrum L(0.f);
-                if(m_Scene->Intersect(ray, &isect)) {                   
+                RGBSpectrum L(0.f);                
+                if(m_Scene->Intersect(ray, &isect, &rayDiff)) {                    
                     for(auto it = m_Scene->GetLightIteratorBegin(); it != m_Scene->GetLightIteratorEnd(); it++) {
                         Ray shadowRay;
                         RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);

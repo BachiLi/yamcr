@@ -28,7 +28,9 @@ namespace yamcr {
 template <int nChannels>
 class Texture {
 public:
-    virtual std::array<float, nChannels> Eval(const Point2 &st) const = 0;
+    virtual std::array<float, nChannels> Eval(
+            const Point2 &st, const Vector2 &dSTdx = Vector2(0.f), 
+            const Vector2 &dSTdy=Vector2(0.f)) const = 0;
 };
 
 typedef Texture<RGBSpectrum::Dimension> TextureSpectrum;

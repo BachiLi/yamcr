@@ -26,11 +26,14 @@ Camera::Camera(const Point &pos, const Vector &dir, const Vector &up,
     m_XRes(xres), m_YRes(yres) {
 }
 
-Ray Camera::GenerateRay(const Point2 &screenPos) const {
+Ray Camera::GenerateRay(const Point2 &screenPos, RayDifferential *rayDiff) const {
     float nx = (screenPos[0]/(float)m_XRes) - 0.5f;
     float ny = - ((screenPos[1]/(float)m_YRes) - 0.5f);
+    Vector D = Vector(nx*m_Right + ny*m_Up + m_Dir);
+    if(rayDiff)
+        *rayDiff = RayDifferential(m_Right, m_Up, D, Vector2(1.f/m_XRes, 1.f/m_YRes));
     Ray ray(m_Pos,
-            Vector(nx*m_Right + ny*m_Up + m_Dir).normalized());
+            D.normalized());
     return ray;
 }
 

@@ -43,7 +43,7 @@
 
 using namespace yamcr;
 
-const int c_XRes = 512, c_YRes = 512, c_BlockSize = 512, c_Spp = 16;
+const int c_XRes = 512, c_YRes = 512, c_BlockSize = 32, c_Spp = 16;
 const char *c_Filename = "foo.exr";
 const Point c_CameraPos = Point(0.f, 1.f, -5.f);
 const Vector c_CameraDir = (Point(0.f, 0.f, -1.f) - c_CameraPos).normalized();
@@ -61,10 +61,8 @@ void CreatePrimitives(std::vector<std::shared_ptr<Primitive>> &prims) {
         const std::string cbName = std::string("checker.exr");
         cb.write(cbName);
         std::shared_ptr<TextureSpectrum> texture = 
-            std::make_shared<BitmapTextureSpectrum>(cbName);
+            std::make_shared<BitmapTextureSpectrum>(cbName, Vector2(2.f, 2.f));
 
-        //std::shared_ptr<TextureSpectrum> texture = 
-        //    std::make_shared<ConstantTextureSpectrum>(RGBSpectrum(0.25f, 0.75f, 0.25f)); 
         std::shared_ptr<BSDF> bsdf =
             std::make_shared<Lambertian>(texture);
         std::shared_ptr<Primitive> prim =

@@ -21,7 +21,15 @@
 
 namespace yamcr {
 
-OpenImageIO::TextureSystem* BitmapTextureSystem::s_TextureSystem = 
-    OpenImageIO::TextureSystem::create();
+static OpenImageIO::TextureSystem* CreateTextureSystem() {
+    OpenImageIO::TextureSystem *texSys = 
+        OpenImageIO::TextureSystem::create();
+    texSys->attribute("autotile", 64);
+    texSys->attribute("automip", 1);
+    texSys->attribute("forcefloat", 1);
+    return texSys;
+}
 
+OpenImageIO::TextureSystem* BitmapTextureSystem::s_TextureSystem = 
+    CreateTextureSystem();
 }

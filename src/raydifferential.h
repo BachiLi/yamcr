@@ -16,27 +16,31 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef YAMCR_TEXTURES_CONSTANT_H__
+#ifndef YAMCR_RAY_DIFFERENTIAL_H__
+#define YAMCR_RAY_DIFFERENTIAL_H__
 
-#include "texture.h"
+#include "vector.h"
 
 namespace yamcr {
 
-template <int nChannels>
-class ConstantTexture : public Texture<nChannels> {
-public:
-    ConstantTexture(const RGBSpectrum &val)
-        : m_Val(val.data) {}
-    virtual std::array<float, nChannels> Eval(const Point2 &st, 
-            const Vector2 &dSTdx, const Vector2 &dSTdy) const {
-        return m_Val;
+struct RayDifferential {    
+    RayDifferential() {
+        dPdx = dPdy = dDdx = dDdy = Vector(0.f);
     }
-private: 
-    const std::array<float, nChannels> m_Val;
-};
+    RayDifferential(const Vector &right, const Vector &up, const Vector &d, 
+            const Vector2 &scale);
 
-typedef ConstantTexture<RGBSpectrum::Dimension> ConstantTextureSpectrum;
+    void Scale(float scale);
+    void Transfer(const Vector &D, const Normal &n, float t);
+    void Reflect(const Vector &D, const Normal &n);
+    void Refract(const Vector &D, const Normal &n, float eta);
+
+    // For surface texture mapping
+    Vector dPdx, dPdy;
+    // For environment map background
+    Vector dDdx, dDdy;
+};
 
 }
 
-#endif //YAMCR_TEXTURES_CONSTANT_H__
+#endif //YAMCR_RAY_DIFFERENTIAL_H__

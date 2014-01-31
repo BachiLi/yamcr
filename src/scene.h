@@ -23,6 +23,7 @@
 #include "intersection.h"
 #include "primitive.h"
 #include "lights/light.h"
+#include "raydifferential.h"
 #include <vector>
 #include <memory>
 #include <embree2/rtcore.h>
@@ -38,7 +39,7 @@ public:
           const std::vector<std::shared_ptr<Light>> &lights);
     ~Scene();
 
-    bool Intersect(Ray &ray, Intersection *isect);
+    bool Intersect(Ray &ray, Intersection *isect, RayDifferential *rayDiff=NULL);
     bool Occluded(Ray &ray);
    
     LightIterator GetLightIteratorBegin() {return m_Lights.begin();}
