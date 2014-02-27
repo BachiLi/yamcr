@@ -16,14 +16,15 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/*
 #include "commondefs.h"
-#include <OpenImageIO/imageio.h>
-#include <OpenImageIO/imagebufalgo.h>
 #include <stdint.h>
 #include <embree2/rtcore.h>
+#include <OpenImageIO/imagebufalgo.h>
 #include <limits>
 #include <exception>
 #include <thread>
+#include <pugixml.hpp>
 
 #include "ray.h"
 #include "scene.h"
@@ -40,9 +41,15 @@
 #include "intersection.h"
 #include "blockedrenderer.h"
 #include "objloader.h"
+*/
+#include "sceneparser.h"
+#include "renderer.h"
+
+#include <iostream>
+#include <exception>
 
 using namespace yamcr;
-
+/*
 const int c_XRes = 512, c_YRes = 512, c_BlockSize = 32, c_Spp = 16;
 const char *c_Filename = "foo.exr";
 const Point c_CameraPos = Point(0.f, 1.f, -5.f);
@@ -105,10 +112,32 @@ int GetNumThreads() {
     std::cout << "Warning: unable to detect number of cores, using 16 threads" << std::endl;
     return 16;
 }
+*/
+void ParseScene() {
+    /*
+    pugi::xml_document doc;
+    pugi::xml_parse_result result = doc.load_file("./scenes/teapot_checker.xml");
+    if(result) {
+        for(auto it = doc.begin(); it != doc.end(); it++) {
+            std::cerr << it->name() << std::endl;
+        }
+    } else {
+        std::cerr << "Error description: " << result.description() << std::endl;
+        std::cerr << "Error offset: " << result.offset << std::endl;
+        throw std::runtime_error("Parse error");
+    }*/
+
+}
 
 int main(int argc, char *argv[]) {
     try {
         rtcInit(NULL);
+        for(int i = 1; i < argc; i++) {
+            SceneParser parser;
+            std::shared_ptr<Renderer> renderer = parser.Parse(std::string(argv[i]));
+            renderer->Render();
+        }
+/*        
         std::vector<std::shared_ptr<Primitive>> prims;
         std::vector<std::shared_ptr<Light>> lights;
         CreatePrimitives(prims);
@@ -126,6 +155,7 @@ int main(int argc, char *argv[]) {
             std::make_shared<BlockedRenderer>(scene, camera, film, sampler, 
                     c_BlockSize, c_Spp, numThreads);
         renderer->Render();
+ */        
         rtcExit();
     } catch(std::exception &ex) {
         std::cerr << ex.what() << std::endl;

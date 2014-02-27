@@ -19,6 +19,7 @@
 #ifndef YAMCR_BLOCKED_RENDERER_H__
 #define YAMCR_BLOCKED_RENDERER_H__
 
+#include "renderer.h"
 #include "scene.h"
 #include "camera.h"
 #include "film.h"
@@ -27,14 +28,13 @@
 
 namespace yamcr {
 
-class BlockedRenderer {
+class BlockedRenderer : public Renderer {
 public:
     BlockedRenderer(std::shared_ptr<Scene> scene,
                     std::shared_ptr<Camera> camera,
-                    std::shared_ptr<Film> film,
                     std::shared_ptr<Sampler> sampler,
                     int blockSize, int spp, int numThreads) :
-        m_Scene(scene), m_Camera(camera), m_Film(film), m_Sampler(sampler),
+        m_Scene(scene), m_Camera(camera), m_Film(camera->GetFilm()), m_Sampler(sampler),
         m_BlockSize(blockSize), m_Spp(spp), m_NumThreads(numThreads), 
         m_XRes(m_Film->GetXRes()), m_YRes(m_Film->GetYRes()) {
         m_TilesNumX = (m_XRes + blockSize-1) / blockSize;

@@ -22,18 +22,23 @@
 #include "ray.h"
 #include "vector.h"
 #include "raydifferential.h"
+#include "film.h"
+
+#include <memory>
 
 namespace yamcr {
 
 class Camera {
 public:
     Camera(const Point &pos, const Vector &dir, const Vector &up, 
-           int xres, int yres);
+           std::shared_ptr<Film> film);
     Ray GenerateRay(const Point2 &screenPos, RayDifferential *rayDiff) const;
+    std::shared_ptr<Film> GetFilm() const {return m_Film;}
 private:
     const Point m_Pos;
     const Vector m_Dir, m_Up, m_Right;
-    const int m_XRes, m_YRes;
+    std::shared_ptr<Film> m_Film;
+    float m_InvXRes, m_InvYRes;
 };
 
 }

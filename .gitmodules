@@ -10,3 +10,9 @@
 [submodule "ThreadPool"]
 	path = ThreadPool
 	url = https://github.com/progschj/ThreadPool.git
+[submodule "pugixml"]
+	path = pugixml
+	url = https://github.com/zeux/pugixml
+[submodule "boost-algorithm"]
+	path = boost-algorithm
+	url = https://github.com/boostorg/algorithm.git

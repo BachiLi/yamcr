@@ -24,19 +24,20 @@
 #include <vector>
 
 namespace yamcr {
-
-struct Triangle {
-    Triangle(uint32_t id0, uint32_t id1, uint32_t id2) {
-        idx[0] = id0;
-        idx[1] = id1;
-        idx[2] = id2;
-    }
-    // Indices to vertex buffer    
-    uint32_t idx[3];    
-};
-
 class TriangleMesh : public Shape {
 public:
+
+    struct Triangle {
+        Triangle(uint32_t id0, uint32_t id1, uint32_t id2) {
+            idx[0] = id0;
+            idx[1] = id1;
+            idx[2] = id2;
+        }
+        // Indices to vertex buffer    
+        uint32_t idx[3];    
+    };
+
+
     TriangleMesh(const std::vector<PointA> &vertices,
                  const std::vector<Normal> &normals,
                  const std::vector<Point2> &sts,

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<renderer type="blocked" blocksize="32" spp="16">
+    <scene>
+        <primitive>
+            <shape type="obj" computenormal="true" filename="models/teapot.obj">
+                <translate x="0" y="-1.5" z="0"/>
+                <scale x="0.02" y="0.02" z="0.02"/>
+            </shape>
+            <bsdf type="lambertian">
+                <Kd type="bitmap" filename="textures/checker.exr" sscale="2" tscale="2"/>
+            </bsdf>
+        </primitive>        
+        <primitive>
+            <shape type="trianglemesh" vertices="-20 -1.5 15 -20 -1.5 -5 20 -1.5 -5 20 -1.5 15" indices="0 1 2 0 2 3"/>
+            <bsdf type="lambertian">
+                <Kd type="constant" color="0.25 0.75 0.25"/>
+            </bsdf>
+        </primitive>
+        <light type="point" from="10 10 -1" intensity="1000 1000 1000"/>
+    </scene>    
+    <camera position="0 1 -5" target="0 0 -1" up="0 1 0">
+        <film width="512" height="512" filename="teapot.exr"/>
+    </camera>
+    <sampler type="random"/>
+</renderer>

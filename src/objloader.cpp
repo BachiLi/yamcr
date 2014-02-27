@@ -99,7 +99,7 @@ size_t GetVertexId(const ObjVertex &vertex,
 std::shared_ptr<TriangleMesh> ObjLoader::Load(
         const Transform &obj2world, const std::string &filename) {
     std::vector<Point> posPool;
-    std::vector<Triangle> triangles;
+    std::vector<TriangleMesh::Triangle> triangles;
     std::vector<Point2> stPool;
     std::map<ObjVertex, size_t> vertexMap;
 
@@ -139,14 +139,14 @@ std::shared_ptr<TriangleMesh> ObjLoader::Load(
             size_t v0id = GetVertexId(v0, posPool, stPool, positions, sts, vertexMap);
             size_t v1id = GetVertexId(v1, posPool, stPool, positions, sts, vertexMap);
             size_t v2id = GetVertexId(v2, posPool, stPool, positions, sts, vertexMap);            
-            triangles.push_back(Triangle(v0id, v1id, v2id));
+            triangles.push_back(TriangleMesh::Triangle(v0id, v1id, v2id));
 
             std::string i3;
             if(ss >> i3) {
                 std::vector<int> i3f = splitFaceStr(i3);
                 ObjVertex v3(i3f);               
                 size_t v3id = GetVertexId(v3, posPool, stPool, positions, sts, vertexMap);
-                triangles.push_back(Triangle(v3id, v0id, v2id));
+                triangles.push_back(TriangleMesh::Triangle(v3id, v0id, v2id));
             }
             std::string i4;
             if(ss >> i4) 
@@ -168,7 +168,8 @@ template <typename VectorType> inline float UnitAngle(const VectorType &u, const
         return 2 * std::asin(0.5f * (v-u).norm());
 }
 
-void ObjLoader::ComputeNormals(const std::vector<PointA> &vertices, const std::vector<Triangle> &triangles, 
+void ObjLoader::ComputeNormals(const std::vector<PointA> &vertices, 
+        const std::vector<TriangleMesh::Triangle> &triangles, 
         std::vector<Normal> &normals) {
     normals.resize(vertices.size(), Normal(0.f));
 
