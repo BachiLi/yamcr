@@ -16,33 +16,18 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef YAMCR_CAMERA_H__
-#define YAMCR_CAMERA_H__
+#ifndef YAMCR_UTILS_H__
+#define YAMCR_UTILS_H__
 
-#include "ray.h"
-#include "vector.h"
-#include "raydifferential.h"
-#include "film.h"
-
-#include <memory>
+#include <cmath>
 
 namespace yamcr {
 
-class Camera {
-public:
-    Camera(const Point &pos, const Vector &dir, const Vector &up, float fov,
-           std::shared_ptr<Film> film);
-    Ray GenerateRay(const Point2 &screenPos, RayDifferential *rayDiff) const;
-    std::shared_ptr<Film> GetFilm() const {return m_Film;}
-private:
-    const Point m_Pos;
-    const Vector m_Dir, m_Up, m_Right;
-    const float m_TanFov;
-    std::shared_ptr<Film> m_Film;
-    const float m_InvXRes, m_InvYRes;
-    const float m_AspectRatio;
-};
+// Utility functions which I dont know where to put...
+inline float DegreeToRadians(float degree) {
+    return M_PI*degree/180.f;
+}
 
 }
 
-#endif //YAMCR_CAMERA_H__
+#endif //YAMCR_UTILS_H__

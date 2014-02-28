@@ -135,9 +135,10 @@ std::shared_ptr<Camera> SceneParser::ParseCamera(pugi::xml_node node) {
     Point target = ParsePoint(node.attribute("target"), Point(0.f, 0.f, -1.f));
     Vector up = ParseVector(node.attribute("up"), Vector(0.f, 1.f, 0.f)).normalized();
     Vector dir = (target - pos).normalized();
+    float fov = ParseFloat(node.attribute("fov"), 45.f);
     std::shared_ptr<Film> film = ParseFilm(node.child("film"));
     std::shared_ptr<Camera> camera = 
-        std::make_shared<Camera>(pos, dir, up, film);
+        std::make_shared<Camera>(pos, dir, up, fov, film);
     return camera;
 }
 
