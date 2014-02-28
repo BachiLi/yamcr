@@ -16,6 +16,11 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "sceneparser.h"
+#include "renderer.h"
+
+#include <iostream>
+
 using namespace yamcr;
 
 int main(int argc, char *argv[]) {
