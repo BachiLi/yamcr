@@ -19,7 +19,7 @@
         <light type="point" from="10 10 -1" intensity="1000 1000 1000"/>
     </scene>    
     <camera position="0 1 -5" target="0 0 -1" up="0 1 0">
-        <film width="512" height="512" filename="teapot.exr"/>
+        <film width="800" height="450" filename="teapot.exr"/>
     </camera>
     <sampler type="random"/>
 </renderer>
