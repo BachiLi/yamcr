@@ -52,8 +52,8 @@ void BlockedRenderer::RenderBlock(int taskId) {
     const int y1 = std::min(y0 + m_BlockSize, m_YRes);
     std::shared_ptr<Sampler> localSampler = m_Sampler->Clone();
 
-    for(int y = x0; y < x1; y++) {
-        for(int x = y0; x < y1; x++) {           
+    for(int y = y0; y < y1; y++) {
+        for(int x = x0; x < x1; x++) {           
             for(int s = 0; s < m_Spp; s++) {                
                 RayDifferential rayDiff;
                 Vector2 offset = localSampler->Next2D();
