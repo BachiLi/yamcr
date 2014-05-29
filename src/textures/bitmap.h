@@ -20,18 +20,11 @@
 #define YAMCR_TEXTURES_BITMAP_H__
 
 #include "texture.h"
+#include "texturesystem.h"
 #include <array>
-#include <OpenImageIO/texture.h>
 #include <stdexcept>
 
 namespace yamcr {
-
-
-class BitmapTextureSystem {
-public:
-    static OpenImageIO::TextureSystem *s_TextureSystem;
-    //friend class BitmapTexture;
-};
 
 template <int nChannels> 
 class BitmapTexture : public Texture<nChannels> {
@@ -62,11 +55,8 @@ std::array<float, nChannels> BitmapTexture<nChannels>::Eval(const Point2 &st,
     Point2 sST = m_STScaler.array()*st.array();
     Vector2 sdSTdx = m_STScaler.array()*dSTdx.array();
     Vector2 sdSTdy = m_STScaler.array()*dSTdy.array();
-    /*fprintf(stderr, "sdSTdx:%f %f, sdSTdy:%f %f\n",
-            sdSTdx[0], sdSTdx[1],
-            sdSTdy[0], sdSTdy[1]);*/
     std::array<float, nChannels> result;
-    if(!BitmapTextureSystem::s_TextureSystem->texture(m_Filename, m_Options, sST[0], sST[1], 
+    if(!TextureSystem::s_TextureSystem->texture(m_Filename, m_Options, sST[0], sST[1], 
                 sdSTdx[0], sdSTdx[1], sdSTdy[0], sdSTdy[1], result.data()))
         throw std::runtime_error("Error during texture lookup");
     return result;

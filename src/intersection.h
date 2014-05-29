@@ -38,6 +38,7 @@ struct Intersection {
     std::shared_ptr<BSDF> bsdf;
     float rayEpsilon;
     uint32_t geomID, primID;
+    float time;
     Vector dPds, dPdt;
 
     Vector2 dSTdx, dSTdy;    

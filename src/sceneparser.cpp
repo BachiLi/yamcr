@@ -5,6 +5,7 @@
 #include "bsdfs/lambertian.h"
 #include "shapes/sphere.h"
 #include "lights/point.h"
+#include "lights/environment.h"
 #include "samplers/random.h"
 #include "textures/constant.h"
 #include "textures/bitmap.h"
@@ -124,6 +125,9 @@ std::shared_ptr<Light> SceneParser::ParseLight(pugi::xml_node node) {
         Point from = ParsePoint(node.attribute("from"), Point(0.f, 0.f, 0.f));
         RGBSpectrum intensity = ParseColor(node.attribute("intensity"), RGBSpectrum(1.f, 1.f, 1.f));
         light = std::make_shared<PointLight>(from, intensity);
+    } else if(type == "environment") {
+        std::string filename = ParseString(node.attribute("filename"), "");
+        light = std::make_shared<EnvironmentLight>(filename);
     } else {
         std::cerr << "Unrecognized \"type\" attribute of \"light\" tag" << std::endl;
     }

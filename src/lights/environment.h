@@ -16,30 +16,31 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef YAMCR_LIGHT_POINT_H__
-#define YAMCR_LIGHT_POINT_H__
+#ifndef YAMCR_LIGHT_ENVIRONMENT_H__
+#define YAMCR_LIGHT_ENVIRONMENT_H__
 
 #include "light.h"
+#include "distribution.h"
+#include "texturesystem.h"
 
 namespace yamcr {
 
-class PointLight : public Light {
+class EnvironmentLight : public Light {
 public:
-    PointLight(const Point &pos, const RGBSpectrum &intensity) :
-        m_Pos(pos), m_Intensity(intensity) {}
+    EnvironmentLight(const std::string &filename);
+    ~EnvironmentLight();
 
     bool IsDeltaLight() const {return true;}
     RGBSpectrum EvalDirect(const Vector &wi) const;
     RGBSpectrum SampleDirect(const Point2 &sample, 
             const Intersection &isect, Ray &ray, float *pdf) const;
     float SampleDirectPdf(
-            const Intersection &isect, const Vector &wi) const {
-        return 1.f;
-    }
-
+            const Intersection &isect, const Vector &wi) const;
 private:
-    Point m_Pos;
-    RGBSpectrum m_Intensity;
+    OpenImageIO::ustring m_Filename;
+    // Dealing with weird non-constant declaration
+    mutable OpenImageIO::TextureOptions m_Options;
+    PiecewiseConstant2D *m_Distribution;
 };
 
 }

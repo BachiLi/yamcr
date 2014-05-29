@@ -16,20 +16,11 @@
     along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "bitmap.h"
-
+#include "texturesystem.h"
 
 namespace yamcr {
 
-static OpenImageIO::TextureSystem* CreateTextureSystem() {
-    OpenImageIO::TextureSystem *texSys = 
-        OpenImageIO::TextureSystem::create();
-    texSys->attribute("autotile", 64);
-    texSys->attribute("automip", 1);
-    texSys->attribute("forcefloat", 1);
-    return texSys;
+OpenImageIO::TextureSystem* TextureSystem::s_TextureSystem = NULL;
+
 }
 
-OpenImageIO::TextureSystem* BitmapTextureSystem::s_TextureSystem = 
-    CreateTextureSystem();
-}

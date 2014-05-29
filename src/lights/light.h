@@ -27,7 +27,13 @@ namespace yamcr {
 
 class Light {
 public:    
-    virtual RGBSpectrum SampleDirect(const Intersection &isect, Ray &ray) const = 0;
+    virtual bool IsDeltaLight() const = 0;
+    virtual RGBSpectrum EvalDirect(const Vector &wi) const = 0;
+    virtual RGBSpectrum SampleDirect(const Point2 &sample,
+            const Intersection &isect, Ray &ray, float *pdf) const = 0;
+    virtual float SampleDirectPdf(
+            const Intersection &isect, const Vector &wi) const = 0;
+
 };
 
 }

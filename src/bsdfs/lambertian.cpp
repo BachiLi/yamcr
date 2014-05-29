@@ -17,6 +17,7 @@
 */
 
 #include "lambertian.h"
+#include "sampling_utils.h"
 
 #include <cmath>
 
@@ -26,6 +27,20 @@ RGBSpectrum Lambertian::Eval(
         const Intersection &isect,
         const Vector &wi, const Vector &wo) const {
     return RGBSpectrum(m_Kd->Eval(isect.st, isect.dSTdx, isect.dSTdy)) / (float)M_PI;
+}
+
+RGBSpectrum Lambertian::Sample(
+            const Point2 &sample,
+            const Intersection &isect,
+            const Vector &wo, Vector *wi, float *pdf) const {
+    *wi = CosineHemisphereSampling(sample, isect.Ns, pdf);
+    return RGBSpectrum(m_Kd->Eval(isect.st, isect.dSTdx, isect.dSTdy)) / (float)M_PI;
+}
+
+float Lambertian::SamplePdf(
+        const Intersection &isect,
+        const Vector &wo, const Vector &wi) const {
+    return CosineHemisphereSamplingPdf(wi, isect.Ns);
 }
 
 }

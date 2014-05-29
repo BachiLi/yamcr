@@ -32,6 +32,13 @@ public:
     RGBSpectrum Eval(
             const Intersection &isect,
             const Vector &wi, const Vector &wo) const;
+    RGBSpectrum Sample(
+            const Point2 &sample,
+            const Intersection &isect,
+            const Vector &wo, Vector *wi, float *pdf) const;
+    float SamplePdf(
+            const Intersection &isect,
+            const Vector &wo, const Vector &wi) const;
 private:
     std::shared_ptr<TextureSpectrum> m_Kd;
 };

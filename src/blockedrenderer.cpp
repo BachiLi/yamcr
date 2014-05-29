@@ -29,7 +29,7 @@
 
 namespace yamcr {
 
-void BlockedRenderer::Render() {    
+void BlockedRenderer::Render() {   
     ThreadPool pool(m_NumThreads);
     std::vector<std::future<void>> results;    
     const int numTasks = m_TilesNumX * m_TilesNumY;
@@ -41,6 +41,46 @@ void BlockedRenderer::Render() {
         res.get();
 
     m_Film->Write();
+}
+
+RGBSpectrum BlockedRenderer::LightSampling(
+        const Scene::ConstLightIterator &light, const Point2 &lightSample,
+        const Intersection &isect, const Vector &wo, Vector *wi, float *pdf) const {
+    Ray shadowRay;
+    RGBSpectrum Le = (*light)->SampleDirect(lightSample, isect, shadowRay, pdf);
+    *wi = shadowRay.dir;
+    if(Le.IsBlack() || *pdf == 0.f)
+        return RGBSpectrum(0.f);
+    Normal Ns = isect.Ns;
+    float cos = Ns.dot(shadowRay.dir);
+    if(cos <= 0.f)
+        return RGBSpectrum(0.f);
+    bool hit = m_Scene->Occluded(shadowRay);
+    if(hit) 
+        return RGBSpectrum(0.f);    
+    return Le*isect.bsdf->Eval(isect, wo, shadowRay.dir)*cos / *pdf;    
+}
+
+RGBSpectrum BlockedRenderer::BSDFSampling(const Scene::ConstLightIterator &light,
+        const Point2 &bsdfSample, const Intersection &isect, const Vector &wo, 
+        Vector *wi, float *pdf) const {    
+
+    RGBSpectrum w = isect.bsdf->Sample(bsdfSample, isect, wo, wi, pdf);
+    Normal Ns = isect.Ns;
+    float cos = Ns.dot(*wi);
+    if(cos <= 0.f)
+        return RGBSpectrum(0.f);
+
+    Ray ray(isect.p, *wi, isect.rayEpsilon, std::numeric_limits<float>::infinity(), isect.time);
+    Intersection newIsect;
+    RGBSpectrum L(0.f);
+    if(m_Scene->Intersect(ray, &newIsect)) {
+        // TODO: add area light contribution
+    } else {
+        L += (*light)->EvalDirect(*wi);
+    }    
+
+    return w * L * cos / *pdf;
 }
 
 void BlockedRenderer::RenderBlock(int taskId) {    
@@ -62,22 +102,27 @@ void BlockedRenderer::RenderBlock(int taskId) {
                 Intersection isect;
                 RGBSpectrum L(0.f);                
                 if(m_Scene->Intersect(ray, &isect, &rayDiff)) {                    
-                    for(auto it = m_Scene->GetLightIteratorBegin(); it != m_Scene->GetLightIteratorEnd(); it++) {
-                        Ray shadowRay;
-                        RGBSpectrum Le = (*it)->SampleDirect(isect, shadowRay);
-                        Normal Ns = isect.Ns;
-                        if(ray.dir.dot(Ns) > 0.f)
-                            Ns = - Ns;
-                        float cos = Ns.dot(shadowRay.dir);
-                        if(cos <= 0.f)
-                            continue;
-                        bool hit = m_Scene->Occluded(shadowRay);
-                        if(!hit)        
-                            L += Le*isect.bsdf->Eval(isect, -ray.dir, shadowRay.dir)*cos;
+                    for(auto light = m_Scene->GetLightIteratorBegin(); 
+                             light != m_Scene->GetLightIteratorEnd(); light++) {
+                        Vector wo = -ray.dir;
+                        float lightPdf = 0.f;
+                        Point2 lightSample = localSampler->Next2D();
+                        Vector wi;
+                        RGBSpectrum lightContrib = 
+                            LightSampling(light, lightSample, isect, wo, &wi, &lightPdf);
+                        float lightWeight = lightPdf / (lightPdf + isect.bsdf->SamplePdf(isect, wo, wi));
+                        L += lightWeight * lightContrib;
+
+                        float bsdfPdf = 0.f;
+                        Point2 bsdfSample = localSampler->Next2D();
+                        RGBSpectrum bsdfContrib = BSDFSampling(light, bsdfSample, isect, wo, &wi, &bsdfPdf);
+                        float bsdfWeight = bsdfPdf / (bsdfPdf + (*light)->SampleDirectPdf(isect, wi));
+                        L += bsdfWeight * bsdfContrib;
                     }
                 } 
                 m_Film->AddSample(x, y, L);
             }
+            localSampler->NextSequence();
         }
     }
 

@@ -28,6 +28,11 @@ inline float DegreeToRadians(float degree) {
     return M_PI*degree/180.f;
 }
 
+template<typename T>
+inline T Clamp(T v, T low, T up) {
+    return std::min(std::max(v, low), up);
+}
+
 }
 
 #endif //YAMCR_UTILS_H__

@@ -24,6 +24,7 @@
 #define YAMCR_SPECTRUM_H__
 
 #include <array>
+#include <iostream>
 
 namespace yamcr {
 
@@ -142,11 +143,24 @@ struct TSpectrum {
         return true;
     }
 
+    friend std::ostream& operator<<(std::ostream &os, const TSpectrum &s) {
+        for(int i = 0; i < N; i++) { 
+            os << s.data[i];
+            if(i != N-1)
+                os << " ";
+        }
+
+        return os;
+    }
+
     std::array<T,N> data;
 };
 
 
 struct RGBSpectrum : public TSpectrum<float, 3> {
+    RGBSpectrum() {
+        data[0] = data[1] = data[2] = 0.f;
+    }
     RGBSpectrum(const TSpectrum &spec) {
         data = spec.data;
     }
@@ -161,7 +175,11 @@ struct RGBSpectrum : public TSpectrum<float, 3> {
     explicit RGBSpectrum(const std::array<float,3> &spec) {
         data = spec;
     }
-    
+   
+    float Y() const {
+        const float YWeight[3] = { 0.212671f, 0.715160f, 0.072169f };
+        return YWeight[0] * data[0] + YWeight[1] * data[1] + YWeight[2] * data[2];
+    }
 };
 
 }

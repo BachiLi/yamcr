@@ -18,6 +18,7 @@
 
 #include "sceneparser.h"
 #include "renderer.h"
+#include "texturesystem.h"
 
 #include <iostream>
 
@@ -26,11 +27,13 @@ using namespace yamcr;
 int main(int argc, char *argv[]) {
     try {
         rtcInit(NULL);
+        TextureSystem::Init();
         for(int i = 1; i < argc; i++) {
             SceneParser parser;
             std::shared_ptr<Renderer> renderer = parser.Parse(std::string(argv[i]));
             renderer->Render();
         }
+        TextureSystem::Destroy();
         rtcExit();
     } catch(std::exception &ex) {
         std::cerr << ex.what() << std::endl;

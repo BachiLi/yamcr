@@ -44,6 +44,11 @@ public:
     void Render();
 private:
     void RenderBlock(int taskId);
+    RGBSpectrum LightSampling(const Scene::ConstLightIterator &light,
+        const Point2 &lightSample, const Intersection &isect, const Vector &wo, Vector *wi, float *pdf) const;
+    RGBSpectrum BSDFSampling(const Scene::ConstLightIterator &light,
+        const Point2 &bsdfSample, const Intersection &isect, const Vector &wo, Vector *wi, float *pdf) const;
+
 
     std::shared_ptr<Scene> m_Scene;
     std::shared_ptr<Camera> m_Camera;

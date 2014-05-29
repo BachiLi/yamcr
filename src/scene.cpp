@@ -43,11 +43,15 @@ bool Scene::Intersect(Ray &ray, Intersection *isect, RayDifferential *rayDiff) {
     if(ray.geomID != -1) {
         isect->p = ray.org + ray.dir * ray.tfar;
         isect->uv = Point2(ray.u, ray.v);
-        isect->Ng = ray.Ng.normalized();       
+        isect->Ng = ray.Ng.normalized();
+        if(isect->Ng.dot(ray.dir) > 0.f) {
+            isect->Ng = -isect->Ng; // always face to incoming ray                
+        }
         isect->bsdf = m_Primitives[ray.geomID]->bsdf;
         isect->rayEpsilon = 1e-3f*ray.tfar; 
         isect->geomID = ray.geomID;
         isect->primID = ray.primID;
+        isect->time = ray.time;
         m_Primitives[ray.geomID]->shape->PostIntersect(*isect);        
         if(rayDiff) {
             rayDiff->Transfer(ray.dir, isect->Ng, ray.tfar);

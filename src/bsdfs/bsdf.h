@@ -32,6 +32,13 @@ public:
     virtual RGBSpectrum Eval(
             const Intersection &isect,
             const Vector &wi, const Vector &wo) const = 0;
+    virtual RGBSpectrum Sample(
+            const Point2 &sample,
+            const Intersection &isect,
+            const Vector &wo, Vector *wi, float *pdf) const = 0;
+    virtual float SamplePdf(
+            const Intersection &isect,
+            const Vector &wo, const Vector &wi) const = 0;
 };
 
 }

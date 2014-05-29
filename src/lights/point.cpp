@@ -20,13 +20,19 @@
 
 namespace yamcr {
 
-RGBSpectrum PointLight::SampleDirect(const Intersection &isect, Ray &ray) const {
+RGBSpectrum PointLight::EvalDirect(const Vector &wi) const {
+    return RGBSpectrum(0.f);
+}
+
+RGBSpectrum PointLight::SampleDirect(const Point2 &/*sample*/,
+        const Intersection &isect, Ray &ray, float *pdf) const {
     ray.org = isect.p;
     Vector v = m_Pos - isect.p;
     float dist = v.norm();
     ray.dir = v / dist;
     ray.tnear = isect.rayEpsilon;
     ray.tfar = dist - isect.rayEpsilon;
+    *pdf = 1.f;
     return m_Intensity / (dist*dist);
 }
 

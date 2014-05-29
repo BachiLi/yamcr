@@ -29,6 +29,7 @@ public:
     virtual std::shared_ptr<Sampler> Clone() = 0;
     virtual float Next1D() = 0;
     virtual Point2 Next2D() = 0;
+    virtual void NextSequence() {};
 };
 
 }
